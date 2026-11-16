@@ -6,6 +6,16 @@ This agent handles voice and chat customer inquiries, reschedules and books appo
 
 ---
 
+## 🌐 Live Server & Instant Cloud Deployment
+
+| Platform | Live Access | Description |
+| :--- | :--- | :--- |
+| **GitHub Codespaces** | [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/yashh077/ai-agent-assistance-for-vittoris) | **1-Click Live Python Server on GitHub**: Boots up a cloud container on GitHub, installs dependencies, and runs `python app.py` with public live HTTPS preview! |
+| **GitHub Pages** | [https://yashh077.github.io/ai-agent-assistance-for-vittoris/](https://yashh077.github.io/ai-agent-assistance-for-vittoris/) | **Instant 24/7 Live Web App**: Served directly by GitHub Pages with full Web Speech voice synthesis, mic input, and warm transfer simulations. |
+| **Render Cloud** | [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com) | Free production web service auto-deployed via `render.yaml`. |
+
+---
+
 ## 🏗️ Architecture & Warm Transfer Routing
 
 ```
