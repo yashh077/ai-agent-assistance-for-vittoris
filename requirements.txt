@@ -1,0 +1,7 @@
+# Core Web Server & API Dependencies
+Flask>=3.0.0
+flask-cors>=4.0.0
+requests>=2.31.0
+
+# Optional Desktop Voice Dependencies (runs even without these installed)
+pyttsx3>=2.90; sys_platform == 'win32'
