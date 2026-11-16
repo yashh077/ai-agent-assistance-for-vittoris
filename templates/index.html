@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vittoris AI | Autonomous Enterprise Operations & Voice Agent</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="navbar">
+      <div class="brand">
+        <div class="logo-mark">V</div>
+        <div>
+          <h1>VITTORIS AI</h1>
+          <span class="subtext">Autonomous Operations & Voice Telephony Agent</span>
+        </div>
+      </div>
+      
+      <div class="nav-controls">
+        <button class="voice-call-toggle-btn" id="voiceCallToggleBtn">
+          <span class="call-icon">📞</span>
+          <span id="callBtnText">Start Voice Call</span>
+        </button>
+
+        <div class="officials-status-badge" id="officialBadge">
+          <span class="status-dot warning"></span>
+          <span id="officialStatusText">Officials: In Meetings</span>
+        </div>
+        
+        <div class="system-status-badge">
+          <span class="status-dot active"></span>
+          <span>Agent 24/7 Active</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="main-layout">
+      <!-- Left: Chat & Voice Interface -->
+      <section class="chat-section">
+        <!-- Live Call Banner (Visible during Voice Call Mode) -->
+        <div class="live-call-banner hidden" id="liveCallBanner">
+          <div class="call-meta-info">
+            <span class="pulse-call-indicator"></span>
+            <div>
+              <strong>LIVE VOICE CALL IN PROGRESS</strong>
+              <span class="call-timer" id="callTimer">00:00</span>
+            </div>
+          </div>
+
+          <div class="voice-wave-container" id="voiceWave">
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+          </div>
+
+          <div class="call-actions">
+            <button class="btn-xs btn-outline" id="ttsVoiceToggle">🔊 Mute Voice</button>
+            <button class="btn-xs btn-danger" id="endCallBtn">End Call</button>
+          </div>
+        </div>
+
+        <div class="chat-header">
+          <div class="agent-profile">
+            <div class="avatar">⚡</div>
+            <div>
+              <h3>Vittoris Autonomous Lead Agent & Voice Router</h3>
+              <p>Specialized in Rescheduling, Explaining Complex AI Services, Server Triage & Warm Transfers</p>
+            </div>
+          </div>
+          <button class="btn-sm btn-outline" id="clearChatBtn">Reset Session</button>
+        </div>
+
+        <!-- Quick Prompts Bar -->
+        <div class="quick-prompts">
+          <button class="chip" data-prompt="Explain how your autonomous voice agents work in detail">🎙️ Explain Voice Bots</button>
+          <button class="chip" data-prompt="Transfer me to the official who knows how to solve server and integration issues">📞 Warm Transfer</button>
+          <button class="chip" data-prompt="I need to reschedule my appointment to a different slot">📅 Reschedule Booking</button>
+          <button class="chip" data-prompt="Explain how your document intelligence pipeline works">📄 Explain Doc Pipeline</button>
+          <button class="chip" data-prompt="Run full server status and health check">⚡ Check Server Health</button>
+          <button class="chip" data-prompt="Our voice agent is dropping calls and high latency">🛠️ Troubleshoot Voice Issue</button>
+        </div>
+
+        <!-- Chat Stream -->
+        <div class="chat-stream" id="chatStream">
+          <div class="message system-msg">
+            <div class="msg-bubble">
+              👋 <strong>Welcome to Vittoris AI.</strong> I am your Autonomous Operations & Voice Assistant. 
+              In the absence of company officials, I can explain our complex AI architecture, reschedule bookings, 
+              diagnose server issues, and execute self-healing runbooks. If a specialist official is available online, 
+              I can also initiate an instant warm call transfer. Click <strong>"Start Voice Call"</strong> above or type below!
+            </div>
+          </div>
+        </div>
+
+        <!-- Input Bar with Speech-to-Text Microphone -->
+        <form class="chat-input-bar" id="chatForm">
+          <button type="button" class="mic-btn" id="micBtn" title="Hold/Click to Speak (Speech-to-Text)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+          </button>
+          <input type="text" id="userInput" placeholder="Ask about services, request a transfer, reschedule, or click mic to speak..." autocomplete="off" required />
+          <button type="submit" id="sendBtn" class="btn-primary">
+            <span>Send</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+          </button>
+        </form>
+      </section>
+
+      <!-- Right: Operational Infrastructure Monitor -->
+      <aside class="ops-sidebar">
+        <!-- Tabs -->
+        <div class="sidebar-tabs">
+          <button class="tab-btn active" data-tab="tab-specialists">👥 Specialists & Transfer</button>
+          <button class="tab-btn" data-tab="tab-calendar">📅 Calendar</button>
+          <button class="tab-btn" data-tab="tab-health">⚡ Server Health</button>
+          <button class="tab-btn" data-tab="tab-tickets">🚨 Escalations</button>
+          <button class="tab-btn" data-tab="tab-controls">⚙️ Officials Sim</button>
+        </div>
+
+        <!-- Tab Content: Specialists & Warm Transfer -->
+        <div class="tab-pane active" id="tab-specialists">
+          <div class="pane-header">
+            <h4>Live Official Knowledge Directory</h4>
+            <button class="btn-xs btn-outline" id="refreshRosterBtn">Refresh</button>
+          </div>
+          <p class="section-desc">When an issue requires an official, the agent routes callers to the exact domain expert:</p>
+          <div id="specialistsList" class="specialists-container">
+            Loading team roster...
+          </div>
+        </div>
+
+        <!-- Tab Content 1: Calendar & Bookings -->
+        <div class="tab-pane" id="tab-calendar">
+          <div class="pane-header">
+            <h4>Live Appointments & Slots</h4>
+            <button class="btn-xs btn-outline" id="refreshCalendarBtn">Refresh</button>
+          </div>
+          <div class="open-slots-box">
+            <span class="box-label">Earliest Open Calendar Slots</span>
+            <div id="quickSlotsList" class="quick-slots-container">
+              Loading slots...
+            </div>
+          </div>
+          <div class="appointments-list-box">
+            <span class="box-label">Confirmed Customer Bookings</span>
+            <div id="confirmedList" class="confirmed-container">
+              No bookings yet.
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content 2: Server & Infrastructure Health -->
+        <div class="tab-pane" id="tab-health">
+          <div class="pane-header">
+            <h4>Infrastructure Health Monitor</h4>
+            <button class="btn-xs btn-outline" id="runDiagBtn">Run Diag</button>
+          </div>
+          <div class="health-summary" id="healthSummary">
+            Checking telemetry...
+          </div>
+          <div class="action-card">
+            <h5>Self-Healing Runbook Actions</h5>
+            <p>Trigger autonomous resolution without human intervention:</p>
+            <div class="btn-grid">
+              <button class="btn-sm btn-secondary" onclick="triggerRemediation('purge_cache_and_recycle_pool')">Purge Cache & DB Pool</button>
+              <button class="btn-sm btn-secondary" onclick="triggerRemediation('restart_voice_stream')">Recycle Voice Streamer</button>
+              <button class="btn-sm btn-secondary" onclick="triggerRemediation('refresh_calendar_tokens')">Resync Calendar Tokens</button>
+              <button class="btn-sm btn-secondary" onclick="triggerRemediation('reprocess_extraction_queue')">Drain Failed PDF Queue</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content 3: Escalation Tickets -->
+        <div class="tab-pane" id="tab-tickets">
+          <div class="pane-header">
+            <h4>Official Escalation Dossiers</h4>
+            <button class="btn-xs btn-outline" id="refreshTicketsBtn">Refresh</button>
+          </div>
+          <p class="section-desc">Tickets logged autonomously when officials are unavailable or human authority is required:</p>
+          <div id="ticketsList" class="tickets-container">
+            No active escalations.
+          </div>
+        </div>
+
+        <!-- Tab Content 4: Officials Controls -->
+        <div class="tab-pane" id="tab-controls">
+          <div class="pane-header">
+            <h4>Simulate Officials Availability</h4>
+          </div>
+          <p class="section-desc">Toggle the real-time operational status of Vittoris leadership to test agent transfer vs autonomous resolution:</p>
+          <div class="status-toggle-group">
+            <label class="toggle-option">
+              <input type="radio" name="officialStatusRadio" value="IN_MEETINGS" checked>
+              <span><strong>In Meetings / Client Sprints</strong> (Agent resolves autonomously & offers priority bookings)</span>
+            </label>
+            <label class="toggle-option">
+              <input type="radio" name="officialStatusRadio" value="AVAILABLE">
+              <span><strong>Available & Online</strong> (Agent initiates live Warm Transfers to specialists)</span>
+            </label>
+            <label class="toggle-option">
+              <input type="radio" name="officialStatusRadio" value="OUT_OF_OFFICE">
+              <span><strong>Out of Office / After Hours</strong> (Autonomous triage + emergency pager escalation)</span>
+            </label>
+          </div>
+          <button class="btn-sm btn-primary" id="saveOfficialStatusBtn" style="margin-top: 12px; width: 100%;">Update Officials Status</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
