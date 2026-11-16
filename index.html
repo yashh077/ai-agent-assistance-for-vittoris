@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vittoris AI | Live GitHub Operations & Voice Agent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #0a0e17;
+      --bg-card: #131b2e;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #06b6d4;
+      --accent-purple: #8b5cf6;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg-dark); color: var(--text-main); font-family: var(--font-sans); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+    .app-container { display: flex; flex-direction: column; height: 100vh; width: 100%; }
+    .navbar { height: 64px; background: rgba(19, 27, 46, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo-mark { width: 38px; height: 38px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); color: white; font-weight: 700; font-size: 20px; display: flex; align-items: center; justify-content: center; border-radius: 8px; box-shadow: 0 4px 14px rgba(6, 182, 212, 0.35); }
+    .brand h1 { font-size: 17px; font-weight: 700; letter-spacing: 1px; }
+    .subtext { font-size: 11px; color: var(--text-muted); }
+    .nav-controls { display: flex; align-items: center; gap: 16px; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+    .status-dot.active { background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+    .status-dot.warning { background: var(--accent-amber); box-shadow: 0 0 8px var(--accent-amber); }
+    .officials-status-badge, .system-status-badge { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; }
+    .voice-call-toggle-btn { background: linear-gradient(135deg, #059669, #10b981); color: white; border: 1px solid rgba(16, 185, 129, 0.4); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3); transition: all 0.2s ease; }
+    .voice-call-toggle-btn.in-call { background: linear-gradient(135deg, #dc2626, #ef4444); box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4); }
+    .live-call-banner { background: linear-gradient(90deg, rgba(5, 150, 105, 0.15), rgba(19, 27, 46, 0.95), rgba(139, 92, 246, 0.15)); border-bottom: 1px solid rgba(16, 185, 129, 0.3); padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .live-call-banner.hidden { display: none; }
+    .call-meta-info { display: flex; align-items: center; gap: 12px; font-size: 12px; }
+    .pulse-call-indicator { width: 10px; height: 10px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981; animation: pulseGlow 1.5s infinite; }
+    @keyframes pulseGlow { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1.2); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+    .call-timer { font-family: var(--font-mono); color: #34d399; margin-left: 8px; font-weight: 600; }
+    .voice-wave-container { display: flex; align-items: center; gap: 4px; height: 24px; }
+    .wave-bar { width: 4px; height: 8px; background: var(--accent-cyan); border-radius: 2px; }
+    .voice-wave-container.speaking .wave-bar { animation: waveBar 1.2s infinite ease-in-out; }
+    .voice-wave-container.speaking .wave-bar:nth-child(1) { animation-delay: 0.1s; }
+    .voice-wave-container.speaking .wave-bar:nth-child(2) { animation-delay: 0.3s; }
+    .voice-wave-container.speaking .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+    .voice-wave-container.speaking .wave-bar:nth-child(4) { animation-delay: 0.4s; }
+    .voice-wave-container.speaking .wave-bar:nth-child(5) { animation-delay: 0.15s; }
+    @keyframes waveBar { 0%, 100% { height: 6px; } 50% { height: 22px; background: var(--accent-purple); } }
+    .main-layout { display: flex; flex: 1; overflow: hidden; }
+    .chat-section { flex: 1; display: flex; flex-direction: column; background: #0d121f; border-right: 1px solid var(--border-color); min-width: 0; }
+    .chat-header { padding: 14px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: rgba(19, 27, 46, 0.5); }
+    .agent-profile { display: flex; align-items: center; gap: 12px; }
+    .agent-profile .avatar { font-size: 22px; width: 36px; height: 36px; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .agent-profile h3 { font-size: 14px; font-weight: 600; }
+    .agent-profile p { font-size: 11px; color: var(--text-muted); }
+    .quick-prompts { display: flex; gap: 8px; padding: 10px 20px; overflow-x: auto; border-bottom: 1px solid var(--border-color); background: rgba(0, 0, 0, 0.2); }
+    .chip { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 16px; font-size: 12px; cursor: pointer; white-space: nowrap; transition: all 0.2s ease; }
+    .chip:hover { background: var(--accent-purple); border-color: var(--accent-purple); color: white; }
+    .chat-stream { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .message { display: flex; max-width: 82%; line-height: 1.5; font-size: 14px; }
+    .message.user-msg { align-self: flex-end; }
+    .message.user-msg .msg-bubble { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border-radius: 14px 14px 2px 14px; padding: 12px 16px; }
+    .message.agent-msg { align-self: flex-start; }
+    .message.agent-msg .msg-bubble { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 14px 14px 14px 2px; padding: 14px 18px; }
+    .message.system-msg { align-self: center; max-width: 90%; }
+    .message.system-msg .msg-bubble { background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); color: #c4b5fd; border-radius: 10px; padding: 12px 16px; font-size: 13px; text-align: center; }
+    .msg-bubble h3 { font-size: 15px; margin-bottom: 8px; color: var(--accent-cyan); }
+    .msg-bubble p { margin-bottom: 8px; }
+    .msg-bubble ul, .msg-bubble ol { padding-left: 20px; margin-bottom: 8px; }
+    .msg-bubble code { font-family: var(--font-mono); background: rgba(0, 0, 0, 0.3); padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #38bdf8; }
+    .msg-bubble blockquote { border-left: 3px solid var(--accent-purple); padding-left: 10px; margin: 8px 0; color: #a78bfa; }
+    .msg-bubble table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
+    .msg-bubble th, .msg-bubble td { border: 1px solid var(--border-color); padding: 6px 10px; text-align: left; }
+    .msg-bubble th { background: rgba(255, 255, 255, 0.05); }
+    .chat-input-bar { padding: 16px 20px; border-top: 1px solid var(--border-color); background: var(--bg-card); display: flex; gap: 12px; }
+    .mic-btn { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-color); color: var(--text-muted); width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+    .mic-btn:hover { color: white; border-color: var(--accent-cyan); }
+    .mic-btn.listening { background: #dc2626; color: white; }
+    .chat-input-bar input { flex: 1; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px 16px; color: white; font-size: 14px; outline: none; }
+    .btn-primary { background: linear-gradient(135deg, var(--accent-cyan), #0284c7); color: white; border: none; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 6px; padding: 6px 12px; font-size: 11px; cursor: pointer; }
+    .btn-xs { padding: 4px 8px; font-size: 10px; border-radius: 4px; cursor: pointer; }
+    .btn-danger { background: #dc2626; color: white; border: none; }
+    .ops-sidebar { width: 440px; background: #0f1524; display: flex; flex-direction: column; flex-shrink: 0; }
+    .sidebar-tabs { display: flex; border-bottom: 1px solid var(--border-color); background: rgba(0, 0, 0, 0.2); }
+    .tab-btn { flex: 1; padding: 12px 4px; background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; }
+    .tab-btn.active { color: var(--accent-cyan); border-bottom: 2px solid var(--accent-cyan); background: rgba(6, 182, 212, 0.05); }
+    .tab-pane { display: none; flex: 1; overflow-y: auto; padding: 16px; flex-direction: column; gap: 16px; }
+    .tab-pane.active { display: flex; }
+    .card-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 8px; font-size: 12px; }
+    .card-item.healthy { border-left: 4px solid var(--accent-green); }
+    .card-item.warning { border-left: 4px solid var(--accent-amber); }
+    .card-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); }
+    .specialist-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px; border-left: 4px solid var(--accent-green); }
+    .specialist-card.busy { border-left: 4px solid var(--accent-amber); }
+    .transfer-btn { width: 100%; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 6px; border: 1px solid rgba(6, 182, 212, 0.3); background: rgba(6, 182, 212, 0.12); color: #38bdf8; cursor: pointer; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="navbar">
+      <div class="brand">
+        <div class="logo-mark">V</div>
+        <div>
+          <h1>VITTORIS AI</h1>
+          <span class="subtext">Live GitHub Operations & Voice Telephony Agent</span>
+        </div>
+      </div>
+      <div class="nav-controls">
+        <button class="voice-call-toggle-btn" id="voiceCallToggleBtn">
+          <span>📞</span>
+          <span id="callBtnText">Start Voice Call</span>
+        </button>
+        <div class="officials-status-badge">
+          <span class="status-dot warning"></span>
+          <span>Officials: In Meetings</span>
+        </div>
+        <div class="system-status-badge">
+          <span class="status-dot active"></span>
+          <span>Live Cloud Agent</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="main-layout">
+      <section class="chat-section">
+        <div class="live-call-banner hidden" id="liveCallBanner">
+          <div class="call-meta-info">
+            <span class="pulse-call-indicator"></span>
+            <div><strong>LIVE CALL IN PROGRESS</strong> <span class="call-timer" id="callTimer">00:00</span></div>
+          </div>
+          <div class="voice-wave-container" id="voiceWave">
+            <span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span>
+          </div>
+          <button class="btn-xs btn-danger" id="endCallBtn">End Call</button>
+        </div>
+
+        <div class="chat-header">
+          <div class="agent-profile">
+            <div class="avatar">⚡</div>
+            <div>
+              <h3>Vittoris Autonomous Lead Agent & Voice Router</h3>
+              <p>Live GitHub Edition: Rescheduling, Services Explanation & Warm Transfer</p>
+            </div>
+          </div>
+          <button class="btn-outline" id="resetBtn">Reset Session</button>
+        </div>
+
+        <div class="quick-prompts">
+          <button class="chip" data-prompt="Explain how your autonomous voice agents work in detail">🎙️ Explain Voice Bots</button>
+          <button class="chip" data-prompt="Transfer me to the official for server and integration issues">📞 Warm Transfer</button>
+          <button class="chip" data-prompt="I need to reschedule my appointment to a different slot">📅 Reschedule Booking</button>
+          <button class="chip" data-prompt="Run full server status and health check">⚡ Check Server Health</button>
+        </div>
+
+        <div class="chat-stream" id="chatStream">
+          <div class="message system-msg">
+            <div class="msg-bubble">
+              👋 <strong>Welcome to the Live Vittoris AI Agent.</strong> Running live directly on GitHub! 
+              Click <strong>"Start Voice Call"</strong> above or type below to test appointment scheduling, 
+              server diagnostics, complex architecture explanations, and live official warm transfers.
+            </div>
+          </div>
+        </div>
+
+        <form class="chat-input-bar" id="chatForm">
+          <button type="button" class="mic-btn" id="micBtn" title="Speak via Microphone">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+          </button>
+          <input type="text" id="userInput" placeholder="Ask about services, request a transfer, reschedule, or click mic to speak..." autocomplete="off" required />
+          <button type="submit" class="btn-primary">Send</button>
+        </form>
+      </section>
+
+      <aside class="ops-sidebar">
+        <div class="sidebar-tabs">
+          <button class="tab-btn active" data-tab="tab-specialists">👥 Specialists</button>
+          <button class="tab-btn" data-tab="tab-calendar">📅 Calendar</button>
+          <button class="tab-btn" data-tab="tab-health">⚡ Health</button>
+        </div>
+
+        <div class="tab-pane active" id="tab-specialists">
+          <div class="specialist-card" id="cardSarah">
+            <div style="display:flex; justify-content:space-between;">
+              <strong>👩‍💻 Sarah Chen (Ext 102)</strong>
+              <span class="card-badge" style="background:#065f46; color:white;">AVAILABLE</span>
+            </div>
+            <div style="font-size:11px; color:#9ca3af; margin:4px 0;">Head of Enterprise Integrations</div>
+            <div style="font-size:11px; color:#60a5fa;">Server crashes, database clusters, PDF OCR pipeline</div>
+            <button class="transfer-btn" onclick="transferTo('sarah')">📞 Initiate Warm Transfer</button>
+          </div>
+          <div class="specialist-card" id="cardMarcus">
+            <div style="display:flex; justify-content:space-between;">
+              <strong>👨‍🔧 Marcus Vance (Ext 103)</strong>
+              <span class="card-badge" style="background:#065f46; color:white;">AVAILABLE</span>
+            </div>
+            <div style="font-size:11px; color:#9ca3af; margin:4px 0;">Senior Solutions Engineer</div>
+            <div style="font-size:11px; color:#60a5fa;">Voice bots, telephony SIP, call latency, WhatsApp</div>
+            <button class="transfer-btn" onclick="transferTo('marcus')">📞 Initiate Warm Transfer</button>
+          </div>
+          <div class="specialist-card busy" id="cardUday">
+            <div style="display:flex; justify-content:space-between;">
+              <strong>👨‍💼 Uday Zayn (Ext 101)</strong>
+              <span class="card-badge" style="background:#78350f; color:white;">IN MEETINGS</span>
+            </div>
+            <div style="font-size:11px; color:#9ca3af; margin:4px 0;">Founder & Lead AI Architect</div>
+            <div style="font-size:11px; color:#60a5fa;">Enterprise strategy, custom pricing, SLA contracts</div>
+            <button class="transfer-btn" style="opacity:0.6;" onclick="transferTo('uday')">📞 In Meetings (Auto-Book)</button>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="tab-calendar">
+          <div style="font-size:12px; font-weight:600; margin-bottom:8px;">Open Consultation Slots</div>
+          <div class="card-item">🕒 Tomorrow at 10:00 AM EST (Open Slot)</div>
+          <div class="card-item">🕒 Tomorrow at 02:00 PM EST (Open Slot)</div>
+          <div class="card-item">🕒 Friday at 11:30 AM EST (Open Slot)</div>
+          <div style="font-size:12px; font-weight:600; margin:16px 0 8px;">Booked Appointments</div>
+          <div id="bookedList" style="font-size:12px; color:#9ca3af;">No bookings made yet in this browser session.</div>
+        </div>
+
+        <div class="tab-pane" id="tab-health">
+          <div class="card-item healthy">API Gateway: 42ms (99.98% uptime)</div>
+          <div class="card-item healthy">Voice Stream Worker (SIP): 118ms</div>
+          <div class="card-item healthy">Document Pipeline: 320ms</div>
+          <div class="card-item healthy">PostgreSQL & Vector Storage: 12ms</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    let inCall = false;
+    let timerInt = null;
+    let secs = 0;
+    const stream = document.getElementById('chatStream');
+
+    function appendMsg(sender, text) {
+      const msg = document.createElement('div');
+      msg.className = `message ${sender}-msg`;
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-bubble';
+      bubble.innerHTML = window.marked ? marked.parse(text) : text;
+      msg.appendChild(bubble);
+      stream.appendChild(msg);
+      stream.scrollTop = stream.scrollHeight;
+    }
+
+    function speak(txt) {
+      if (!inCall || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const clean = txt.replace(/[\*#`\|>\-]/g, '').replace(/[⚡📅🛠️🚨💡🎉✅⚠️ℹ️👨‍💼👩‍💻👨‍🔧📞👋📧🕒]/g, '');
+      const utt = new SpeechSynthesisUtterance(clean);
+      const wave = document.getElementById('voiceWave');
+      utt.onstart = () => wave.classList.add('speaking');
+      utt.onend = () => wave.classList.remove('speaking');
+      window.speechSynthesis.speak(utt);
+    }
+
+    function processLocalAI(input) {
+      const low = input.toLowerCase();
+      if (low.includes('voice') && (low.includes('explain') || low.includes('how'))) {
+        return "### How Autonomous Voice Agents Work\n\n1. **Ultra-Low Latency Telephony:** Connects directly to SIP trunks and WebSockets with sub-200ms audio streaming.\n2. **Conversational Intelligence:** Natural turn-taking, interruption handling, and objection resolution.\n3. **Action Tools:** Dynamically queries live calendars to book appointments or triggers backend APIs during the call.";
+      }
+      if (low.includes('transfer') || low.includes('server') || low.includes('connect')) {
+        return "### 📞 Warm Call Transfer Connected\n\n**Matched Specialist:** Sarah Chen (Head of Enterprise Integrations, Ext 102)\n**Status:** `ONLINE & AVAILABLE`\n\n> *\"I am bridging your line to Sarah Chen right now. She has been forwarded your server telemetry.\"*\n\n---\n**Sarah Chen Answering:**\n*\"Hi there, this is Sarah from Integrations. I have your server logs on my screen. Let's get this resolved immediately.\"*";
+      }
+      if (low.includes('reschedule') || low.includes('move')) {
+        return "### ✅ Appointment Rescheduled\n\nYour consultation has been moved to **Tomorrow at 02:00 PM EST**. Confirmation email updated.";
+      }
+      if (low.includes('book') || low.includes('appointment') || low.includes('consultation')) {
+        const id = 'VIT-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        document.getElementById('bookedList').innerHTML = `<div class='card-item healthy'><strong>${id}</strong> - Confirmed for Tomorrow at 10:00 AM EST<br><span style='color:#34d399;'>Assigned: Uday Zayn & Solutions Team</span></div>`;
+        return `### 🎉 Appointment Confirmed!\n\n- **Reference Code:** \`${id}\`\n- **Date & Time:** Tomorrow at 10:00 AM EST\n- **Assigned Official:** Uday Zayn & Solutions Team\n- **Link:** [https://meet.vittoris.com/${id.toLowerCase()}](https://meet.vittoris.com/${id.toLowerCase()})\n\nCalendar invite dispatched. Even with officials in meetings, your slot is locked!`;
+      }
+      if (low.includes('health') || low.includes('status')) {
+        return "### Real-Time Infrastructure Health Diagnostic\n\n- **API Gateway:** `42ms` (HEALTHY)\n- **Voice Stream Worker:** `118ms` (HEALTHY)\n- **Document Pipeline:** `320ms` (HEALTHY)\n- **Database Cluster:** `12ms` (HEALTHY)\n\nAll services operational.";
+      }
+      return "Vittoris AI engineers bespoke AI infrastructure, autonomous conversational voice/chat agents, and performance-based client acquisition systems. Would you like to check server health, reschedule an appointment, or speak to a specialist?";
+    }
+
+    document.getElementById('chatForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const inp = document.getElementById('userInput');
+      const val = inp.value.trim();
+      if (!val) return;
+      appendMsg('user', val);
+      inp.value = '';
+      setTimeout(() => {
+        const reply = processLocalAI(val);
+        appendMsg('agent', reply);
+        speak(reply);
+      }, 400);
+    });
+
+    document.querySelectorAll('.chip').forEach(c => {
+      c.addEventListener('click', () => {
+        document.getElementById('userInput').value = c.getAttribute('data-prompt');
+        document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+      });
+    });
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.getAttribute('data-tab')).classList.add('active');
+      });
+    });
+
+    const callToggle = document.getElementById('voiceCallToggleBtn');
+    const banner = document.getElementById('liveCallBanner');
+    callToggle.addEventListener('click', () => {
+      inCall = !inCall;
+      if (inCall) {
+        callToggle.classList.add('in-call');
+        document.getElementById('callBtnText').textContent = 'In Call (Click to End)';
+        banner.classList.remove('hidden');
+        secs = 0;
+        timerInt = setInterval(() => {
+          secs++;
+          document.getElementById('callTimer').textContent = `${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
+        }, 1000);
+        const welcome = "Thank you for calling Vittoris AI. I am your autonomous voice operations assistant. How can I assist you today?";
+        appendMsg('agent', `📞 **Live Voice Call Connected.**\n\n*${welcome}*`);
+        speak(welcome);
+      } else {
+        callToggle.classList.remove('in-call');
+        document.getElementById('callBtnText').textContent = 'Start Voice Call';
+        banner.classList.add('hidden');
+        clearInterval(timerInt);
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    });
+
+    document.getElementById('endCallBtn').addEventListener('click', () => callToggle.click());
+
+    window.transferTo = function(target) {
+      if (target === 'sarah') appendMsg('user', 'Please transfer me to Sarah Chen for server issues.');
+      else if (target === 'marcus') appendMsg('user', 'Please transfer me to Marcus Vance for voice systems.');
+      else appendMsg('user', 'Please transfer me to Uday Zayn.');
+      document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+    };
+  </script>
+</body>
+</html>
