@@ -3,351 +3,885 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vittoris AI | Live GitHub Operations & Voice Agent</title>
+  <title>Vittoris AI | Voice Assistant</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-dark: #0a0e17;
       --bg-card: #131b2e;
-      --border-color: rgba(255, 255, 255, 0.08);
-      --accent-cyan: #06b6d4;
-      --accent-purple: #8b5cf6;
-      --accent-green: #10b981;
-      --accent-amber: #f59e0b;
-      --accent-red: #ef4444;
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
-      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+      --bg-card2: #0f1724;
+      --border: rgba(255,255,255,0.08);
+      --cyan: #06b6d4;
+      --purple: #8b5cf6;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --sans: 'Inter', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background-color: var(--bg-dark); color: var(--text-main); font-family: var(--font-sans); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-    .app-container { display: flex; flex-direction: column; height: 100vh; width: 100%; }
-    .navbar { height: 64px; background: rgba(19, 27, 46, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { background: var(--bg-dark); color: var(--text); font-family: var(--sans); display: flex; flex-direction: column; }
+
+    /* ── NAVBAR ── */
+    nav {
+      height: 60px; padding: 0 24px;
+      background: rgba(13,18,31,0.9);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+      backdrop-filter: blur(12px);
+    }
     .brand { display: flex; align-items: center; gap: 12px; }
-    .logo-mark { width: 38px; height: 38px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); color: white; font-weight: 700; font-size: 20px; display: flex; align-items: center; justify-content: center; border-radius: 8px; box-shadow: 0 4px 14px rgba(6, 182, 212, 0.35); }
-    .brand h1 { font-size: 17px; font-weight: 700; letter-spacing: 1px; }
-    .subtext { font-size: 11px; color: var(--text-muted); }
-    .nav-controls { display: flex; align-items: center; gap: 16px; }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-    .status-dot.active { background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
-    .status-dot.warning { background: var(--accent-amber); box-shadow: 0 0 8px var(--accent-amber); }
-    .officials-status-badge, .system-status-badge { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; }
-    .voice-call-toggle-btn { background: linear-gradient(135deg, #059669, #10b981); color: white; border: 1px solid rgba(16, 185, 129, 0.4); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3); transition: all 0.2s ease; }
-    .voice-call-toggle-btn.in-call { background: linear-gradient(135deg, #dc2626, #ef4444); box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4); }
-    .live-call-banner { background: linear-gradient(90deg, rgba(5, 150, 105, 0.15), rgba(19, 27, 46, 0.95), rgba(139, 92, 246, 0.15)); border-bottom: 1px solid rgba(16, 185, 129, 0.3); padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; }
-    .live-call-banner.hidden { display: none; }
-    .call-meta-info { display: flex; align-items: center; gap: 12px; font-size: 12px; }
-    .pulse-call-indicator { width: 10px; height: 10px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981; animation: pulseGlow 1.5s infinite; }
-    @keyframes pulseGlow { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1.2); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
-    .call-timer { font-family: var(--font-mono); color: #34d399; margin-left: 8px; font-weight: 600; }
-    .voice-wave-container { display: flex; align-items: center; gap: 4px; height: 24px; }
-    .wave-bar { width: 4px; height: 8px; background: var(--accent-cyan); border-radius: 2px; }
-    .voice-wave-container.speaking .wave-bar { animation: waveBar 1.2s infinite ease-in-out; }
-    .voice-wave-container.speaking .wave-bar:nth-child(1) { animation-delay: 0.1s; }
-    .voice-wave-container.speaking .wave-bar:nth-child(2) { animation-delay: 0.3s; }
-    .voice-wave-container.speaking .wave-bar:nth-child(3) { animation-delay: 0.2s; }
-    .voice-wave-container.speaking .wave-bar:nth-child(4) { animation-delay: 0.4s; }
-    .voice-wave-container.speaking .wave-bar:nth-child(5) { animation-delay: 0.15s; }
-    @keyframes waveBar { 0%, 100% { height: 6px; } 50% { height: 22px; background: var(--accent-purple); } }
-    .main-layout { display: flex; flex: 1; overflow: hidden; }
-    .chat-section { flex: 1; display: flex; flex-direction: column; background: #0d121f; border-right: 1px solid var(--border-color); min-width: 0; }
-    .chat-header { padding: 14px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: rgba(19, 27, 46, 0.5); }
-    .agent-profile { display: flex; align-items: center; gap: 12px; }
-    .agent-profile .avatar { font-size: 22px; width: 36px; height: 36px; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-    .agent-profile h3 { font-size: 14px; font-weight: 600; }
-    .agent-profile p { font-size: 11px; color: var(--text-muted); }
-    .quick-prompts { display: flex; gap: 8px; padding: 10px 20px; overflow-x: auto; border-bottom: 1px solid var(--border-color); background: rgba(0, 0, 0, 0.2); }
-    .chip { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 16px; font-size: 12px; cursor: pointer; white-space: nowrap; transition: all 0.2s ease; }
-    .chip:hover { background: var(--accent-purple); border-color: var(--accent-purple); color: white; }
-    .chat-stream { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
-    .message { display: flex; max-width: 82%; line-height: 1.5; font-size: 14px; }
-    .message.user-msg { align-self: flex-end; }
-    .message.user-msg .msg-bubble { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border-radius: 14px 14px 2px 14px; padding: 12px 16px; }
-    .message.agent-msg { align-self: flex-start; }
-    .message.agent-msg .msg-bubble { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 14px 14px 14px 2px; padding: 14px 18px; }
-    .message.system-msg { align-self: center; max-width: 90%; }
-    .message.system-msg .msg-bubble { background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); color: #c4b5fd; border-radius: 10px; padding: 12px 16px; font-size: 13px; text-align: center; }
-    .msg-bubble h3 { font-size: 15px; margin-bottom: 8px; color: var(--accent-cyan); }
-    .msg-bubble p { margin-bottom: 8px; }
-    .msg-bubble ul, .msg-bubble ol { padding-left: 20px; margin-bottom: 8px; }
-    .msg-bubble code { font-family: var(--font-mono); background: rgba(0, 0, 0, 0.3); padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #38bdf8; }
-    .msg-bubble blockquote { border-left: 3px solid var(--accent-purple); padding-left: 10px; margin: 8px 0; color: #a78bfa; }
-    .msg-bubble table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
-    .msg-bubble th, .msg-bubble td { border: 1px solid var(--border-color); padding: 6px 10px; text-align: left; }
-    .msg-bubble th { background: rgba(255, 255, 255, 0.05); }
-    .chat-input-bar { padding: 16px 20px; border-top: 1px solid var(--border-color); background: var(--bg-card); display: flex; gap: 12px; }
-    .mic-btn { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-color); color: var(--text-muted); width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
-    .mic-btn:hover { color: white; border-color: var(--accent-cyan); }
-    .mic-btn.listening { background: #dc2626; color: white; }
-    .chat-input-bar input { flex: 1; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px 16px; color: white; font-size: 14px; outline: none; }
-    .btn-primary { background: linear-gradient(135deg, var(--accent-cyan), #0284c7); color: white; border: none; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-    .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 6px; padding: 6px 12px; font-size: 11px; cursor: pointer; }
-    .btn-xs { padding: 4px 8px; font-size: 10px; border-radius: 4px; cursor: pointer; }
-    .btn-danger { background: #dc2626; color: white; border: none; }
-    .ops-sidebar { width: 440px; background: #0f1524; display: flex; flex-direction: column; flex-shrink: 0; }
-    .sidebar-tabs { display: flex; border-bottom: 1px solid var(--border-color); background: rgba(0, 0, 0, 0.2); }
-    .tab-btn { flex: 1; padding: 12px 4px; background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; }
-    .tab-btn.active { color: var(--accent-cyan); border-bottom: 2px solid var(--accent-cyan); background: rgba(6, 182, 212, 0.05); }
-    .tab-pane { display: none; flex: 1; overflow-y: auto; padding: 16px; flex-direction: column; gap: 16px; }
-    .tab-pane.active { display: flex; }
-    .card-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 8px; font-size: 12px; }
-    .card-item.healthy { border-left: 4px solid var(--accent-green); }
-    .card-item.warning { border-left: 4px solid var(--accent-amber); }
-    .card-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); }
-    .specialist-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px; border-left: 4px solid var(--accent-green); }
-    .specialist-card.busy { border-left: 4px solid var(--accent-amber); }
-    .transfer-btn { width: 100%; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 6px; border: 1px solid rgba(6, 182, 212, 0.3); background: rgba(6, 182, 212, 0.12); color: #38bdf8; cursor: pointer; margin-top: 8px; }
+    .logo { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, var(--cyan), var(--purple)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; box-shadow: 0 4px 14px rgba(6,182,212,.35); }
+    .brand-name { font-size: 16px; font-weight: 700; letter-spacing: 1px; }
+    .brand-sub { font-size: 10px; color: var(--muted); }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .badge { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 11px; background: rgba(255,255,255,.05); border: 1px solid var(--border); }
+    .dot { width: 7px; height: 7px; border-radius: 50%; }
+    .dot-green { background: var(--green); box-shadow: 0 0 7px var(--green); }
+    .dot-amber { background: var(--amber); box-shadow: 0 0 7px var(--amber); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{ opacity:1; } 50%{ opacity:.4; } }
+
+    /* ── MAIN LAYOUT ── */
+    .layout { display: flex; flex: 1; overflow: hidden; }
+
+    /* ── LEFT: CHAT / VOICE ── */
+    .chat-col {
+      flex: 1; display: flex; flex-direction: column;
+      border-right: 1px solid var(--border);
+      background: #0d121f;
+      min-width: 0;
+    }
+
+    .chat-top {
+      padding: 14px 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(19,27,46,.5);
+    }
+    .agent-info { display: flex; align-items: center; gap: 10px; }
+    .agent-avatar {
+      width: 36px; height: 36px; border-radius: 8px; font-size: 20px;
+      background: rgba(139,92,246,.15); border: 1px solid rgba(139,92,246,.4);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .agent-info h3 { font-size: 14px; font-weight: 600; }
+    .agent-info p { font-size: 11px; color: var(--muted); }
+
+    /* ── VOICE CALL BANNER ── */
+    .call-banner {
+      padding: 10px 20px;
+      display: none; align-items: center; justify-content: space-between;
+      background: linear-gradient(90deg, rgba(5,150,105,.18), rgba(13,18,31,.95), rgba(139,92,246,.18));
+      border-bottom: 1px solid rgba(16,185,129,.3);
+    }
+    .call-banner.active { display: flex; }
+    .call-left { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; }
+    .call-pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); animation: callPulse 1.5s infinite; }
+    @keyframes callPulse { 0%{ transform:scale(.95); box-shadow:0 0 0 0 rgba(16,185,129,.7); } 70%{ transform:scale(1.2); box-shadow:0 0 0 8px rgba(16,185,129,0); } 100%{ transform:scale(.95); } }
+    .call-timer { font-family: var(--mono); color: #34d399; margin-left:6px; }
+    .waves { display: flex; gap: 3px; align-items: center; height: 24px; }
+    .wave { width: 4px; background: var(--cyan); border-radius: 2px; height: 6px; transition: height .15s; }
+    .waves.listening .wave { animation: waveAnim 0.9s infinite ease-in-out; background: var(--red); }
+    .waves.speaking .wave { animation: waveAnim 1.1s infinite ease-in-out; background: var(--cyan); }
+    .waves .wave:nth-child(1){ animation-delay:.05s; } .waves .wave:nth-child(2){ animation-delay:.2s; }
+    .waves .wave:nth-child(3){ animation-delay:.12s; } .waves .wave:nth-child(4){ animation-delay:.35s; }
+    .waves .wave:nth-child(5){ animation-delay:.18s; }
+    @keyframes waveAnim { 0%,100%{ height:4px; } 50%{ height:22px; } }
+    .call-status-text { font-size: 11px; color: var(--muted); }
+
+    /* ── CHAT MESSAGES ── */
+    .messages {
+      flex: 1; overflow-y: auto; padding: 20px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .msg { display: flex; max-width: 80%; font-size: 14px; line-height: 1.6; }
+    .msg.user { align-self: flex-end; }
+    .msg.agent { align-self: flex-start; }
+    .msg.system { align-self: center; max-width: 90%; }
+    .bubble {
+      padding: 12px 16px; border-radius: 14px;
+    }
+    .msg.user .bubble { background: linear-gradient(135deg,#2563eb,#1d4ed8); border-radius: 14px 14px 2px 14px; }
+    .msg.agent .bubble { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px 14px 14px 2px; }
+    .msg.system .bubble { background: rgba(139,92,246,.1); border: 1px solid rgba(139,92,246,.3); color: #c4b5fd; border-radius: 10px; text-align:center; font-size:13px; }
+
+    /* ── BOTTOM CONTROLS ── */
+    .bottom-bar {
+      padding: 16px 20px; border-top: 1px solid var(--border);
+      background: var(--bg-card); display: flex; flex-direction: column; gap: 10px;
+    }
+    .mic-row { display: flex; align-items: center; gap: 12px; }
+    .mic-main {
+      width: 56px; height: 56px; border-radius: 50%; border: none; cursor: pointer;
+      background: linear-gradient(135deg, #059669, #10b981);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 18px rgba(16,185,129,.4);
+      transition: all .2s; flex-shrink: 0;
+    }
+    .mic-main:hover { transform: scale(1.06); }
+    .mic-main.listening { background: linear-gradient(135deg,#dc2626,#ef4444); box-shadow: 0 4px 18px rgba(239,68,68,.5); animation: micPulse 1s infinite; }
+    @keyframes micPulse { 0%,100%{ box-shadow:0 4px 18px rgba(239,68,68,.5); } 50%{ box-shadow:0 4px 24px rgba(239,68,68,.8); } }
+    .mic-main svg { width: 26px; height: 26px; }
+    .mic-hint { flex: 1; font-size: 13px; color: var(--muted); }
+    .mic-hint strong { color: var(--text); display: block; margin-bottom: 2px; }
+    .text-row { display: flex; gap: 10px; }
+    .text-row input {
+      flex: 1; background: rgba(0,0,0,.3); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 14px; color: white; font-size: 13px; outline: none;
+    }
+    .text-row input:focus { border-color: var(--cyan); }
+    .text-row button {
+      background: linear-gradient(135deg,var(--cyan),#0284c7); color: white;
+      border: none; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+
+    /* ── RIGHT SIDEBAR ── */
+    .sidebar { width: 400px; display: flex; flex-direction: column; background: #0f1524; flex-shrink: 0; }
+    .stabs { display: flex; border-bottom: 1px solid var(--border); background: rgba(0,0,0,.2); }
+    .stab { flex: 1; padding: 12px 4px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); font-size: 11.5px; font-weight: 500; cursor: pointer; transition: all .2s; }
+    .stab.on { color: var(--cyan); border-bottom-color: var(--cyan); background: rgba(6,182,212,.05); }
+    .spane { display: none; flex: 1; overflow-y: auto; padding: 16px; flex-direction: column; gap: 12px; }
+    .spane.on { display: flex; }
+
+    /* Cards in sidebar */
+    .scard { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+    .scard.pending { border-left: 4px solid var(--amber); }
+    .scard.confirmed { border-left: 4px solid var(--green); }
+    .scard.cleared { border-left: 4px solid var(--cyan); }
+    .scard-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .scard-sub { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+    .scard-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+    .sbadge { font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
+    .sbadge.amber { background: rgba(245,158,11,.2); color: var(--amber); }
+    .sbadge.green { background: rgba(16,185,129,.2); color: var(--green); }
+    .sbadge.cyan { background: rgba(6,182,212,.2); color: var(--cyan); }
+    .sep { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
+    .detail-row { font-size: 11px; margin-bottom: 3px; }
+    .detail-row span { color: var(--muted); }
+
+    /* Officials panel */
+    .official-row { display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; }
+    .official-avatar { font-size: 24px; }
+    .official-name { font-size: 13px; font-weight: 600; }
+    .official-role { font-size: 11px; color: var(--muted); }
+    .official-status { margin-left: auto; font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
+    .os-busy { background: rgba(245,158,11,.2); color: var(--amber); }
+    .os-avail { background: rgba(16,185,129,.2); color: var(--green); }
+
+    /* Sim controls */
+    .sim-label { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+    .sim-btn { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: rgba(255,255,255,.05); color: var(--text); font-size: 12px; cursor: pointer; margin-bottom: 8px; transition: background .2s; }
+    .sim-btn:hover { background: rgba(255,255,255,.1); }
+    .sim-btn.danger { border-color: rgba(239,68,68,.3); color: var(--red); background: rgba(239,68,68,.07); }
+    .sim-btn.success { border-color: rgba(16,185,129,.3); color: var(--green); background: rgba(16,185,129,.07); }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 3px; }
+
+    /* Progress bar for intake */
+    .intake-progress { background: rgba(255,255,255,.05); border-radius: 6px; padding: 10px 14px; border: 1px solid var(--border); }
+    .intake-progress p { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+    .steps { display: flex; gap: 6px; }
+    .step { flex: 1; height: 4px; border-radius: 2px; background: rgba(255,255,255,.1); transition: background .3s; }
+    .step.done { background: var(--green); }
+    .step.active { background: var(--cyan); animation: stepPulse 1s infinite; }
+    @keyframes stepPulse { 0%,100%{ opacity:1; } 50%{ opacity:.5; } }
+
+    @media(max-width: 768px) { .sidebar { display: none; } }
   </style>
 </head>
 <body>
-  <div class="app-container">
-    <header class="navbar">
-      <div class="brand">
-        <div class="logo-mark">V</div>
+
+<nav>
+  <div class="brand">
+    <div class="logo">V</div>
+    <div>
+      <div class="brand-name">VITTORIS AI</div>
+      <div class="brand-sub">Voice Assistant &bull; Customer Intake &bull; Appointment Scheduler</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="badge"><span class="dot dot-amber"></span><span id="officialStatusBadge">Officials: In Meetings</span></div>
+    <div class="badge"><span class="dot dot-green"></span>Agent Live 24/7</div>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- ── LEFT: VOICE CHAT ── -->
+  <div class="chat-col">
+
+    <!-- Call Banner -->
+    <div class="call-banner" id="callBanner">
+      <div class="call-left">
+        <div class="call-pulse"></div>
+        <div>VOICE SESSION ACTIVE <span class="call-timer" id="callTimer">00:00</span></div>
+      </div>
+      <div class="waves" id="waveBars">
+        <div class="wave"></div><div class="wave"></div><div class="wave"></div>
+        <div class="wave"></div><div class="wave"></div>
+      </div>
+      <div class="call-status-text" id="callStatusText">Tap the mic to speak</div>
+    </div>
+
+    <!-- Agent header -->
+    <div class="chat-top">
+      <div class="agent-info">
+        <div class="agent-avatar">⚡</div>
         <div>
-          <h1>VITTORIS AI</h1>
-          <span class="subtext">Live GitHub Operations & Voice Telephony Agent</span>
+          <h3>Vittoris Autonomous Voice Agent</h3>
+          <p>Speech-to-Speech · Customer Intake · Appointment Rescheduling · Official Queue</p>
         </div>
       </div>
-      <div class="nav-controls">
-        <button class="voice-call-toggle-btn" id="voiceCallToggleBtn">
-          <span>📞</span>
-          <span id="callBtnText">Start Voice Call</span>
+      <button class="sim-btn" style="width:auto;padding:5px 12px;font-size:11px;margin:0;" onclick="resetSession()">New Session</button>
+    </div>
+
+    <!-- Intake Progress -->
+    <div style="padding:10px 20px; border-bottom:1px solid var(--border);">
+      <div class="intake-progress">
+        <p>Customer Intake Progress — <span id="progressLabel">Collecting caller details…</span></p>
+        <div class="steps">
+          <div class="step active" id="step0" title="Name"></div>
+          <div class="step" id="step1" title="Phone"></div>
+          <div class="step" id="step2" title="Query"></div>
+          <div class="step" id="step3" title="Appointment Date"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="messages" id="messages">
+      <div class="msg system">
+        <div class="bubble">
+          👋 <strong>Welcome to Vittoris AI.</strong> Our company officials are currently in meetings.<br>
+          I am your autonomous voice assistant. I will take down your name, phone number, and query, then lock in an appointment date for you. When officials clear their schedule, they'll be notified with your complete file.<br><br>
+          🎙️ <strong>Press the green mic button below to speak, or type your message.</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Controls -->
+    <div class="bottom-bar">
+      <div class="mic-row">
+        <button class="mic-main" id="micBtn" title="Click to speak">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="22"/>
+          </svg>
         </button>
-        <div class="officials-status-badge">
-          <span class="status-dot warning"></span>
-          <span>Officials: In Meetings</span>
-        </div>
-        <div class="system-status-badge">
-          <span class="status-dot active"></span>
-          <span>Live Cloud Agent</span>
+        <div class="mic-hint">
+          <strong id="micHintTitle">Click Mic to Speak</strong>
+          <span id="micHintSub">The agent will listen, process your message, and reply with voice</span>
         </div>
       </div>
-    </header>
-
-    <div class="main-layout">
-      <section class="chat-section">
-        <div class="live-call-banner hidden" id="liveCallBanner">
-          <div class="call-meta-info">
-            <span class="pulse-call-indicator"></span>
-            <div><strong>LIVE CALL IN PROGRESS</strong> <span class="call-timer" id="callTimer">00:00</span></div>
-          </div>
-          <div class="voice-wave-container" id="voiceWave">
-            <span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span>
-          </div>
-          <button class="btn-xs btn-danger" id="endCallBtn">End Call</button>
-        </div>
-
-        <div class="chat-header">
-          <div class="agent-profile">
-            <div class="avatar">⚡</div>
-            <div>
-              <h3>Vittoris Autonomous Lead Agent & Voice Router</h3>
-              <p>Live GitHub Edition: Rescheduling, Services Explanation & Warm Transfer</p>
-            </div>
-          </div>
-          <button class="btn-outline" id="resetBtn">Reset Session</button>
-        </div>
-
-        <div class="quick-prompts">
-          <button class="chip" data-prompt="Explain how your autonomous voice agents work in detail">🎙️ Explain Voice Bots</button>
-          <button class="chip" data-prompt="Transfer me to the official for server and integration issues">📞 Warm Transfer</button>
-          <button class="chip" data-prompt="I need to reschedule my appointment to a different slot">📅 Reschedule Booking</button>
-          <button class="chip" data-prompt="Run full server status and health check">⚡ Check Server Health</button>
-        </div>
-
-        <div class="chat-stream" id="chatStream">
-          <div class="message system-msg">
-            <div class="msg-bubble">
-              👋 <strong>Welcome to the Live Vittoris AI Agent.</strong> Running live directly on GitHub! 
-              Click <strong>"Start Voice Call"</strong> above or type below to test appointment scheduling, 
-              server diagnostics, complex architecture explanations, and live official warm transfers.
-            </div>
-          </div>
-        </div>
-
-        <form class="chat-input-bar" id="chatForm">
-          <button type="button" class="mic-btn" id="micBtn" title="Speak via Microphone">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-          </button>
-          <input type="text" id="userInput" placeholder="Ask about services, request a transfer, reschedule, or click mic to speak..." autocomplete="off" required />
-          <button type="submit" class="btn-primary">Send</button>
-        </form>
-      </section>
-
-      <aside class="ops-sidebar">
-        <div class="sidebar-tabs">
-          <button class="tab-btn active" data-tab="tab-specialists">👥 Specialists</button>
-          <button class="tab-btn" data-tab="tab-calendar">📅 Calendar</button>
-          <button class="tab-btn" data-tab="tab-health">⚡ Health</button>
-        </div>
-
-        <div class="tab-pane active" id="tab-specialists">
-          <div class="specialist-card" id="cardSarah">
-            <div style="display:flex; justify-content:space-between;">
-              <strong>👩‍💻 Sarah Chen (Ext 102)</strong>
-              <span class="card-badge" style="background:#065f46; color:white;">AVAILABLE</span>
-            </div>
-            <div style="font-size:11px; color:#9ca3af; margin:4px 0;">Head of Enterprise Integrations</div>
-            <div style="font-size:11px; color:#60a5fa;">Server crashes, database clusters, PDF OCR pipeline</div>
-            <button class="transfer-btn" onclick="transferTo('sarah')">📞 Initiate Warm Transfer</button>
-          </div>
-          <div class="specialist-card" id="cardMarcus">
-            <div style="display:flex; justify-content:space-between;">
-              <strong>👨‍🔧 Marcus Vance (Ext 103)</strong>
-              <span class="card-badge" style="background:#065f46; color:white;">AVAILABLE</span>
-            </div>
-            <div style="font-size:11px; color:#9ca3af; margin:4px 0;">Senior Solutions Engineer</div>
-            <div style="font-size:11px; color:#60a5fa;">Voice bots, telephony SIP, call latency, WhatsApp</div>
-            <button class="transfer-btn" onclick="transferTo('marcus')">📞 Initiate Warm Transfer</button>
-          </div>
-          <div class="specialist-card busy" id="cardUday">
-            <div style="display:flex; justify-content:space-between;">
-              <strong>👨‍💼 Uday Zayn (Ext 101)</strong>
-              <span class="card-badge" style="background:#78350f; color:white;">IN MEETINGS</span>
-            </div>
-            <div style="font-size:11px; color:#9ca3af; margin:4px 0;">Founder & Lead AI Architect</div>
-            <div style="font-size:11px; color:#60a5fa;">Enterprise strategy, custom pricing, SLA contracts</div>
-            <button class="transfer-btn" style="opacity:0.6;" onclick="transferTo('uday')">📞 In Meetings (Auto-Book)</button>
-          </div>
-        </div>
-
-        <div class="tab-pane" id="tab-calendar">
-          <div style="font-size:12px; font-weight:600; margin-bottom:8px;">Open Consultation Slots</div>
-          <div class="card-item">🕒 Tomorrow at 10:00 AM EST (Open Slot)</div>
-          <div class="card-item">🕒 Tomorrow at 02:00 PM EST (Open Slot)</div>
-          <div class="card-item">🕒 Friday at 11:30 AM EST (Open Slot)</div>
-          <div style="font-size:12px; font-weight:600; margin:16px 0 8px;">Booked Appointments</div>
-          <div id="bookedList" style="font-size:12px; color:#9ca3af;">No bookings made yet in this browser session.</div>
-        </div>
-
-        <div class="tab-pane" id="tab-health">
-          <div class="card-item healthy">API Gateway: 42ms (99.98% uptime)</div>
-          <div class="card-item healthy">Voice Stream Worker (SIP): 118ms</div>
-          <div class="card-item healthy">Document Pipeline: 320ms</div>
-          <div class="card-item healthy">PostgreSQL & Vector Storage: 12ms</div>
-        </div>
-      </aside>
+      <div class="text-row">
+        <input type="text" id="textInput" placeholder="Or type your message here…" />
+        <button onclick="sendText()">Send</button>
+      </div>
     </div>
   </div>
 
-  <script>
-    let inCall = false;
-    let timerInt = null;
-    let secs = 0;
-    const stream = document.getElementById('chatStream');
+  <!-- ── RIGHT SIDEBAR ── -->
+  <div class="sidebar">
+    <div class="stabs">
+      <button class="stab on" data-tab="tab-dossiers">📋 Dossiers</button>
+      <button class="stab" data-tab="tab-officials">👥 Officials</button>
+      <button class="stab" data-tab="tab-sim">⚙️ Simulator</button>
+    </div>
 
-    function appendMsg(sender, text) {
-      const msg = document.createElement('div');
-      msg.className = `message ${sender}-msg`;
-      const bubble = document.createElement('div');
-      bubble.className = 'msg-bubble';
-      bubble.innerHTML = window.marked ? marked.parse(text) : text;
-      msg.appendChild(bubble);
-      stream.appendChild(msg);
-      stream.scrollTop = stream.scrollHeight;
+    <!-- Tab: Dossiers -->
+    <div class="spane on" id="tab-dossiers">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">
+        Customer dossiers recorded in officials' absence. Officials are notified when their schedule clears.
+      </div>
+      <div id="dossiersList"><p style="font-size:12px;color:var(--muted);">No dossiers yet. Complete a voice intake to create one.</p></div>
+    </div>
+
+    <!-- Tab: Officials -->
+    <div class="spane" id="tab-officials">
+      <div style="font-size:12px;font-weight:600;margin-bottom:12px;">Company Officials — Live Status</div>
+      <div id="officialsRoster">
+        <div class="official-row" style="margin-bottom:8px;">
+          <div class="official-avatar">👨‍💼</div>
+          <div><div class="official-name">Uday Zayn</div><div class="official-role">Founder & Lead AI Architect</div></div>
+          <div class="official-status os-busy" id="udayStatus">IN MEETINGS</div>
+        </div>
+        <div class="official-row" style="margin-bottom:8px;">
+          <div class="official-avatar">👩‍💻</div>
+          <div><div class="official-name">Sarah Chen</div><div class="official-role">Head of Enterprise Integrations</div></div>
+          <div class="official-status os-busy" id="sarahStatus">IN MEETINGS</div>
+        </div>
+        <div class="official-row">
+          <div class="official-avatar">👨‍🔧</div>
+          <div><div class="official-name">Marcus Vance</div><div class="official-role">Senior Solutions Engineer</div></div>
+          <div class="official-status os-busy" id="marcusStatus">IN MEETINGS</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Simulator -->
+    <div class="spane" id="tab-sim">
+      <p class="sim-label">Simulate scenarios to test the voice agent behavior:</p>
+      <button class="sim-btn success" onclick="simClearSchedule()">📋 Simulate: Officials Clear Their Schedule<br><small style="opacity:.7">Triggers notification of all pending dossiers to leadership</small></button>
+      <hr class="sep">
+      <p class="sim-label">Test reschedule flow:</p>
+      <button class="sim-btn" onclick="simReschedule()">📅 Say: "I need to reschedule my appointment"</button>
+      <button class="sim-btn" onclick="simNewIntake()">🎙️ Say: "Hello, I need help scheduling a consultation"</button>
+      <hr class="sep">
+      <p class="sim-label">Reset:</p>
+      <button class="sim-btn danger" onclick="resetSession()">🔄 Reset Voice Session & Clear Context</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// =====================================================================
+// STATE
+// =====================================================================
+const SESSION_KEY = 'vittoris_session_v3';
+let STATE = loadState();
+let isMicListening = false;
+let isSpeaking = false;
+let callActive = false;
+let callSeconds = 0;
+let callTimerInt = null;
+let recognition = null;
+
+function defaultState() {
+  return {
+    phase: 'greeting',  // greeting | name | phone | query | date | complete | reschedule_id | reschedule_date
+    name: null,
+    phone: null,
+    query: null,
+    date: null,
+    rescheduleId: null,
+    dossiers: []
+  };
+}
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY)) || defaultState(); } catch(e) { return defaultState(); }
+}
+
+function saveState() { localStorage.setItem(SESSION_KEY, JSON.stringify(STATE)); }
+
+function resetSession() {
+  STATE = defaultState();
+  saveState();
+  document.getElementById('messages').innerHTML = '';
+  addMessage('system', '🔄 Session reset. Ready for a new caller.');
+  agentSay("Session reset. I am ready for a new inquiry. Please press the microphone button and tell me your name and what you need help with today.");
+  updateProgressBar();
+  refreshDossiers();
+}
+
+// =====================================================================
+// SPEECH RECOGNITION
+// =====================================================================
+function initSpeechRecognition() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    document.getElementById('micHintSub').textContent = 'Speech Recognition not supported — please use Chrome or Edge browser';
+    document.getElementById('micBtn').style.opacity = '.4';
+    document.getElementById('micBtn').style.cursor = 'not-allowed';
+    return;
+  }
+  recognition = new SR();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.continuous = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onresult = e => {
+    const transcript = e.results[0][0].transcript;
+    stopListening();
+    if (transcript.trim()) processInput(transcript.trim());
+  };
+  recognition.onerror = e => { console.error('SR error:', e.error); stopListening(); };
+  recognition.onend = () => stopListening();
+}
+
+document.getElementById('micBtn').addEventListener('click', () => {
+  if (!recognition) return;
+  if (isMicListening) {
+    recognition.stop();
+  } else {
+    if (isSpeaking) window.speechSynthesis.cancel();
+    startListening();
+    recognition.start();
+  }
+});
+
+document.getElementById('textInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') sendText();
+});
+
+function sendText() {
+  const v = document.getElementById('textInput').value.trim();
+  if (!v) return;
+  document.getElementById('textInput').value = '';
+  processInput(v);
+}
+
+function startListening() {
+  isMicListening = true;
+  if (!callActive) activateCallSession();
+  document.getElementById('micBtn').classList.add('listening');
+  document.getElementById('micHintTitle').textContent = '🔴 Listening…';
+  document.getElementById('micHintSub').textContent = 'Speak now — I am listening';
+  document.getElementById('callStatusText').textContent = 'Listening…';
+  setWaveMode('listening');
+}
+
+function stopListening() {
+  isMicListening = false;
+  document.getElementById('micBtn').classList.remove('listening');
+  document.getElementById('micHintTitle').textContent = 'Click Mic to Speak';
+  document.getElementById('micHintSub').textContent = 'The agent will listen, process your message, and reply with voice';
+  setWaveMode('');
+}
+
+function setWaveMode(mode) {
+  const w = document.getElementById('waveBars');
+  w.classList.remove('listening','speaking');
+  if (mode) w.classList.add(mode);
+}
+
+// =====================================================================
+// TEXT-TO-SPEECH
+// =====================================================================
+function agentSay(text) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.rate = 1.0;
+  utter.pitch = 1.05;
+  // Pick best available voice
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v => v.name.includes('Google US English')) ||
+                    voices.find(v => v.lang === 'en-US' && v.name.includes('Female')) ||
+                    voices.find(v => v.lang === 'en-US') || null;
+  if (preferred) utter.voice = preferred;
+
+  utter.onstart = () => { isSpeaking = true; setWaveMode('speaking'); document.getElementById('callStatusText').textContent = 'Agent speaking…'; };
+  utter.onend = () => { isSpeaking = false; setWaveMode(''); document.getElementById('callStatusText').textContent = 'Tap the mic to speak'; };
+  utter.onerror = () => { isSpeaking = false; setWaveMode(''); };
+  window.speechSynthesis.speak(utter);
+}
+
+// =====================================================================
+// CALL SESSION TIMER
+// =====================================================================
+function activateCallSession() {
+  callActive = true;
+  document.getElementById('callBanner').classList.add('active');
+  callSeconds = 0;
+  if (callTimerInt) clearInterval(callTimerInt);
+  callTimerInt = setInterval(() => {
+    callSeconds++;
+    const m = String(Math.floor(callSeconds/60)).padStart(2,'0');
+    const s = String(callSeconds%60).padStart(2,'0');
+    document.getElementById('callTimer').textContent = `${m}:${s}`;
+  }, 1000);
+}
+
+// =====================================================================
+// CHAT MESSAGES
+// =====================================================================
+function addMessage(role, text) {
+  const container = document.getElementById('messages');
+  const msgEl = document.createElement('div');
+  msgEl.className = `msg ${role}`;
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                         .replace(/\n/g, '<br>');
+  msgEl.appendChild(bubble);
+  container.appendChild(msgEl);
+  container.scrollTop = container.scrollHeight;
+}
+
+// =====================================================================
+// PROGRESS BAR
+// =====================================================================
+const PHASE_TO_STEP = {
+  'greeting': -1, 'name': 0, 'phone': 1, 'query': 2, 'date': 3,
+  'complete': 4, 'reschedule_id': -1, 'reschedule_date': -1
+};
+const PHASE_LABEL = {
+  'greeting': 'Starting session…', 'name': 'Collecting: Full Name',
+  'phone': 'Collecting: Phone Number', 'query': 'Collecting: Details of Inquiry',
+  'date': 'Selecting: Appointment Date', 'complete': '✅ Dossier Recorded!',
+  'reschedule_id': 'Rescheduling: Finding your booking', 'reschedule_date': 'Rescheduling: New Date'
+};
+function updateProgressBar() {
+  const steps = [0,1,2,3].map(i => document.getElementById(`step${i}`));
+  const active = PHASE_TO_STEP[STATE.phase] ?? -1;
+  const filled = active >= 4 ? 4 : active;
+  steps.forEach((el, i) => {
+    el.classList.remove('done','active');
+    if (i < filled) el.classList.add('done');
+    else if (i === active) el.classList.add('active');
+  });
+  document.getElementById('progressLabel').textContent = PHASE_LABEL[STATE.phase] || '';
+}
+
+// =====================================================================
+// EXTRACTION HELPERS
+// =====================================================================
+function extractPhone(text) {
+  const m = text.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}|\b\d{10}\b/);
+  if (m) {
+    const digits = m[0].replace(/\D/g,'');
+    if (digits.length >= 10) return m[0].trim();
+  }
+  // spelled-out digit attempt
+  const wordNums = {'zero':'0','one':'1','two':'2','three':'3','four':'4','five':'5','six':'6','seven':'7','eight':'8','nine':'9','oh':'0'};
+  let clean = text.toLowerCase().replace(/\b(zero|one|two|three|four|five|six|seven|eight|nine|oh)\b/g, w => wordNums[w]);
+  const m2 = clean.replace(/\s/g,'').match(/\d{10,}/);
+  if (m2 && m2[0].length >= 10) return m2[0].slice(0,10).replace(/(\d{3})(\d{3})(\d{4})/,'$1-$2-$3');
+  return null;
+}
+
+function extractName(text) {
+  const patterns = [
+    /(?:my name is|i am|i'm|this is|name[:\s]+)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/i,
+    /(?:Dr\.|Mr\.|Mrs\.|Ms\.)\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?/i,
+    /^([A-Z][a-z]{2,}(?:\s+[A-Z][a-z]{2,}){1,2})$/
+  ];
+  for (const p of patterns) {
+    const m = text.match(p);
+    if (m) {
+      const c = (m[1]||m[0]).trim();
+      const bad = ['hello','hi','hey','yes','no','okay','sure','thanks','vittoris','reschedule','booking','slot'];
+      if (!bad.includes(c.toLowerCase())) return c;
+    }
+  }
+  return null;
+}
+
+function extractDate(text) {
+  const days = { monday:1, tuesday:2, wednesday:3, thursday:4, friday:5, tomorrow:1, 'next week':7 };
+  const low = text.toLowerCase();
+  for (const [d, offset] of Object.entries(days)) {
+    if (low.includes(d)) {
+      const dt = new Date(); dt.setDate(dt.getDate() + offset);
+      const timeMatch = low.match(/(\d{1,2}(?::\d{2})?\s*(?:am|pm))/);
+      const timeStr = timeMatch ? timeMatch[0].toUpperCase() : '10:00 AM';
+      return `${dt.toDateString()} at ${timeStr} EST`;
+    }
+  }
+  const slotM = low.match(/slot\s*([1-5])/);
+  if (slotM) {
+    const slotTimes = ['10:00 AM', '11:30 AM', '2:00 PM', '3:30 PM', '5:00 PM'];
+    const idx = Math.min(parseInt(slotM[1])-1, 4);
+    const dt = new Date(); dt.setDate(dt.getDate() + 1);
+    while ([0,6].includes(dt.getDay())) dt.setDate(dt.getDate()+1);
+    return `${dt.toDateString()} at ${slotTimes[idx]} EST`;
+  }
+  const dateM = text.match(/\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}/i);
+  if (dateM) return `${dateM[0]} at 10:00 AM EST`;
+  const nextBiz = new Date(); nextBiz.setDate(nextBiz.getDate()+1);
+  while([0,6].includes(nextBiz.getDay())) nextBiz.setDate(nextBiz.getDate()+1);
+  if (low.includes('earliest') || low.includes('any') || low.includes('first') || low.includes('available'))
+    return `${nextBiz.toDateString()} at 10:00 AM EST`;
+  return null;
+}
+
+// =====================================================================
+// NEXT AVAILABLE SLOTS TEXT
+// =====================================================================
+function getSlotSuggestions() {
+  const slots = [];
+  const dt = new Date();
+  const hours = [[10,0],[11,30],[14,0],[15,30],[17,0]];
+  let count = 0;
+  for (let d = 1; d <= 10 && count < 4; d++) {
+    const target = new Date(dt); target.setDate(dt.getDate()+d);
+    if ([0,6].includes(target.getDay())) continue;
+    for (const [h,m] of hours) {
+      if (count >= 4) break;
+      target.setHours(h,m,0,0);
+      slots.push(`Slot ${count+1}: ${target.toDateString()} at ${target.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})} EST`);
+      count++;
+    }
+  }
+  return slots;
+}
+
+// =====================================================================
+// DOSSIER MANAGEMENT
+// =====================================================================
+function createDossier(name, phone, query, date) {
+  const id = 'VIT-' + Math.random().toString(36).substring(2,8).toUpperCase();
+  const official = query.match(/server|database|pipeline|api|crash/i) ? 'Sarah Chen' :
+                   query.match(/voice|call|audio|sip|phone/i) ? 'Marcus Vance' :
+                   'Uday Zayn';
+  const dossier = { id, name, phone, query, date, official, status: 'PENDING_OFFICIAL_CLEARANCE', created: new Date().toLocaleString() };
+  STATE.dossiers = STATE.dossiers || [];
+  STATE.dossiers.unshift(dossier);
+  saveState();
+  refreshDossiers();
+  return dossier;
+}
+
+function refreshDossiers() {
+  const container = document.getElementById('dossiersList');
+  const dossiers = STATE.dossiers || [];
+  if (!dossiers.length) {
+    container.innerHTML = '<p style="font-size:12px;color:var(--muted);">No dossiers yet. Complete a voice intake to create one.</p>';
+    return;
+  }
+  container.innerHTML = dossiers.map(d => `
+    <div class="scard ${d.status==='OFFICIAL_NOTIFIED'?'cleared':d.status==='RESCHEDULED'?'confirmed':'pending'}">
+      <div class="scard-row">
+        <div class="scard-title">${d.name}</div>
+        <span class="sbadge ${d.status==='OFFICIAL_NOTIFIED'?'cyan':d.status==='RESCHEDULED'?'green':'amber'}">
+          ${d.status==='OFFICIAL_NOTIFIED'?'✅ NOTIFIED':d.status==='RESCHEDULED'?'🔄 RESCHEDULED':'⏳ PENDING'}
+        </span>
+      </div>
+      <div class="scard-sub">Ref: ${d.id} &bull; ${d.created}</div>
+      <hr class="sep">
+      <div class="detail-row"><span>📞 Phone:</span> ${d.phone}</div>
+      <div class="detail-row"><span>💬 Query:</span> ${d.query}</div>
+      <div class="detail-row"><span>📅 Appointment:</span> ${d.date}</div>
+      <div class="detail-row"><span>👤 Assigned:</span> ${d.official}</div>
+    </div>
+  `).join('');
+}
+
+// =====================================================================
+// OFFICIAL STATUS
+// =====================================================================
+let officialStatus = 'IN_MEETINGS';
+
+function setOfficialStatus(status) {
+  officialStatus = status;
+  const avail = status === 'AVAILABLE';
+  const cls = avail ? 'os-avail' : 'os-busy';
+  const lbl = avail ? 'AVAILABLE' : 'IN MEETINGS';
+  ['udayStatus','sarahStatus','marcusStatus'].forEach(id => {
+    const el = document.getElementById(id);
+    el.className = `official-status ${cls}`;
+    el.textContent = lbl;
+  });
+  document.getElementById('officialStatusBadge').textContent = `Officials: ${avail ? 'Available' : 'In Meetings'}`;
+  const badge = document.querySelector('.badge .dot-amber, .badge .dot-green');
+  if (badge) badge.className = `dot ${avail ? 'dot-green' : 'dot-amber'}`;
+}
+
+function simClearSchedule() {
+  const dossiers = STATE.dossiers || [];
+  const pending = dossiers.filter(d => d.status === 'PENDING_OFFICIAL_CLEARANCE');
+  pending.forEach(d => d.status = 'OFFICIAL_NOTIFIED');
+  saveState();
+  setOfficialStatus('AVAILABLE');
+  refreshDossiers();
+  const count = pending.length;
+  const txt = count > 0
+    ? `Officials have cleared their schedule! ${count} customer dossier${count>1?'s':''} have been delivered to leadership. Uday Zayn, Sarah Chen, and Marcus Vance are now reviewing the customer files.`
+    : `Officials have cleared their schedule and are now available.`;
+  addMessage('agent', `📋 **Officials Schedule Cleared!**\n\n${count > 0 ? `✅ **${count} pending dossier${count>1?'s':''} delivered** to leadership dashboard.` : 'No pending dossiers.'}\n\nAll team leads are now reviewing incoming customer files.`);
+  agentSay(txt);
+}
+
+function simReschedule() { processInput("I need to reschedule my appointment"); }
+function simNewIntake() { processInput("Hello, I need help scheduling a consultation with Vittoris AI"); }
+
+// =====================================================================
+// CORE CONVERSATION ENGINE
+// =====================================================================
+function processInput(text) {
+  if (!callActive) activateCallSession();
+  addMessage('user', text);
+  const low = text.toLowerCase();
+
+  // --- Reschedule intent (anytime) ---
+  if (STATE.phase !== 'reschedule_id' && STATE.phase !== 'reschedule_date' &&
+      (low.includes('reschedule') || low.includes('change appointment') || low.includes('move my appointment'))) {
+    STATE.phase = 'reschedule_id';
+    saveState(); updateProgressBar();
+
+    const dossiers = STATE.dossiers || [];
+    if (!dossiers.length) {
+      const msg = "I'd be happy to help you reschedule. I don't see any existing bookings in this session yet. Could you tell me the name or phone number on the booking?";
+      addMessage('agent', msg); agentSay(msg); return;
     }
 
-    function speak(txt) {
-      if (!inCall || !('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-      const clean = txt.replace(/[\*#`\|>\-]/g, '').replace(/[⚡📅🛠️🚨💡🎉✅⚠️ℹ️👨‍💼👩‍💻👨‍🔧📞👋📧🕒]/g, '');
-      const utt = new SpeechSynthesisUtterance(clean);
-      const wave = document.getElementById('voiceWave');
-      utt.onstart = () => wave.classList.add('speaking');
-      utt.onend = () => wave.classList.remove('speaking');
-      window.speechSynthesis.speak(utt);
+    const latestRef = dossiers[0].id;
+    STATE.rescheduleId = latestRef;
+    const msg = `Sure! I found your most recent booking (${latestRef} for ${dossiers[0].name}). What is your preferred new appointment date? You can say something like "Tuesday at 2 PM", "Slot 1", or "earliest available".`;
+    addMessage('agent', msg); agentSay(msg);
+    return;
+  }
+
+  // --- Reschedule Date Collection ---
+  if (STATE.phase === 'reschedule_date' || (STATE.phase === 'reschedule_id' && extractDate(text))) {
+    const newDate = extractDate(text);
+    if (!newDate) {
+      const slots = getSlotSuggestions();
+      const msg = `I didn't quite catch a date from that. Here are some open slots:\n${slots.join('\n')}\n\nWhich one would you like?`;
+      addMessage('agent', msg); agentSay("I didn't catch a date. Here are some open slots: " + slots.join(', ') + ". Which one works for you?");
+      return;
     }
-
-    function processLocalAI(input) {
-      const low = input.toLowerCase();
-      if (low.includes('voice') && (low.includes('explain') || low.includes('how'))) {
-        return "### How Autonomous Voice Agents Work\n\n1. **Ultra-Low Latency Telephony:** Connects directly to SIP trunks and WebSockets with sub-200ms audio streaming.\n2. **Conversational Intelligence:** Natural turn-taking, interruption handling, and objection resolution.\n3. **Action Tools:** Dynamically queries live calendars to book appointments or triggers backend APIs during the call.";
-      }
-      if (low.includes('transfer') || low.includes('server') || low.includes('connect')) {
-        return "### 📞 Warm Call Transfer Connected\n\n**Matched Specialist:** Sarah Chen (Head of Enterprise Integrations, Ext 102)\n**Status:** `ONLINE & AVAILABLE`\n\n> *\"I am bridging your line to Sarah Chen right now. She has been forwarded your server telemetry.\"*\n\n---\n**Sarah Chen Answering:**\n*\"Hi there, this is Sarah from Integrations. I have your server logs on my screen. Let's get this resolved immediately.\"*";
-      }
-      if (low.includes('reschedule') || low.includes('move')) {
-        return "### ✅ Appointment Rescheduled\n\nYour consultation has been moved to **Tomorrow at 02:00 PM EST**. Confirmation email updated.";
-      }
-      if (low.includes('book') || low.includes('appointment') || low.includes('consultation')) {
-        const id = 'VIT-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-        document.getElementById('bookedList').innerHTML = `<div class='card-item healthy'><strong>${id}</strong> - Confirmed for Tomorrow at 10:00 AM EST<br><span style='color:#34d399;'>Assigned: Uday Zayn & Solutions Team</span></div>`;
-        return `### 🎉 Appointment Confirmed!\n\n- **Reference Code:** \`${id}\`\n- **Date & Time:** Tomorrow at 10:00 AM EST\n- **Assigned Official:** Uday Zayn & Solutions Team\n- **Link:** [https://meet.vittoris.com/${id.toLowerCase()}](https://meet.vittoris.com/${id.toLowerCase()})\n\nCalendar invite dispatched. Even with officials in meetings, your slot is locked!`;
-      }
-      if (low.includes('health') || low.includes('status')) {
-        return "### Real-Time Infrastructure Health Diagnostic\n\n- **API Gateway:** `42ms` (HEALTHY)\n- **Voice Stream Worker:** `118ms` (HEALTHY)\n- **Document Pipeline:** `320ms` (HEALTHY)\n- **Database Cluster:** `12ms` (HEALTHY)\n\nAll services operational.";
-      }
-      return "Vittoris AI engineers bespoke AI infrastructure, autonomous conversational voice/chat agents, and performance-based client acquisition systems. Would you like to check server health, reschedule an appointment, or speak to a specialist?";
+    const dossiers = STATE.dossiers || [];
+    const target = STATE.rescheduleId ? dossiers.find(d => d.id === STATE.rescheduleId) : dossiers[0];
+    if (target) {
+      const oldDate = target.date;
+      target.date = newDate;
+      target.status = 'RESCHEDULED';
+      saveState(); refreshDossiers();
+      const msg = `✅ **Appointment Rescheduled!**\n\n- **Customer:** ${target.name}\n- **Previous Date:** ~~${oldDate}~~\n- **New Appointment:** **${newDate}**\n- **Ref:** ${target.id}\n\nThe assigned official (${target.official}) has been updated. Is there anything else you need?`;
+      addMessage('agent', msg);
+      agentSay(`Your appointment has been rescheduled to ${newDate}. The assigned official has been updated. Is there anything else I can help you with?`);
     }
+    STATE.phase = 'greeting'; STATE.rescheduleId = null; saveState(); updateProgressBar();
+    return;
+  }
 
-    document.getElementById('chatForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const inp = document.getElementById('userInput');
-      const val = inp.value.trim();
-      if (!val) return;
-      appendMsg('user', val);
-      inp.value = '';
-      setTimeout(() => {
-        const reply = processLocalAI(val);
-        appendMsg('agent', reply);
-        speak(reply);
-      }, 400);
-    });
+  if (STATE.phase === 'reschedule_id') {
+    // Try to find by name/phone
+    const dossiers = STATE.dossiers || [];
+    const found = dossiers.find(d => text.toLowerCase().includes(d.name.toLowerCase()) || text.includes(d.phone) || text.toUpperCase().includes(d.id));
+    if (found) {
+      STATE.rescheduleId = found.id;
+      STATE.phase = 'reschedule_date'; saveState(); updateProgressBar();
+      const msg = `Found your booking for ${found.name} (${found.id}) currently on ${found.date}. What new date would you like?`;
+      addMessage('agent', msg); agentSay(`Found your booking for ${found.name}. What new date would you like?`);
+    } else {
+      const slots = getSlotSuggestions();
+      STATE.phase = 'reschedule_date'; saveState(); updateProgressBar();
+      const msg = `Got it. What new appointment date works for you? Available: ${slots.slice(0,3).join(', ')}.`;
+      addMessage('agent', msg); agentSay("What new appointment date works for you? " + slots.slice(0,3).join(', '));
+    }
+    return;
+  }
 
-    document.querySelectorAll('.chip').forEach(c => {
-      c.addEventListener('click', () => {
-        document.getElementById('userInput').value = c.getAttribute('data-prompt');
-        document.getElementById('chatForm').dispatchEvent(new Event('submit'));
-      });
-    });
+  // --- INTAKE FLOW ---
+  // Phase: greeting → name
+  if (STATE.phase === 'greeting') {
+    // Check if they already gave a name
+    const name = extractName(text);
+    if (name) {
+      STATE.name = name; STATE.phase = 'phone'; saveState(); updateProgressBar();
+      const msg = `Hello, **${name}**! 👋 Lovely to hear from you.\n\nOur company officials are currently in closed meetings. I will take down your details so they can follow up as soon as their schedule clears.\n\nCould you please share your **phone number** so the official can reach you?`;
+      addMessage('agent', msg); agentSay(`Hello, ${name}! Our company officials are currently in meetings. I'll take down your details for them. Could you please share your phone number?`);
+    } else {
+      STATE.phase = 'name'; saveState(); updateProgressBar();
+      const msg = `Hello! Welcome to **Vittoris AI**.\n\nOur company officials and lead architects are currently in closed meetings and unavailable right now. However, I am here to help — I'll take down your name, phone number, your query, and schedule an appointment date for you. When officials clear their schedule, they'll be notified immediately with your complete file.\n\nTo get started, could you please tell me your **Full Name**?`;
+      addMessage('agent', msg); agentSay("Hello! Welcome to Vittoris AI. Our officials are currently in meetings. I'll take down your details and schedule an appointment for you. Could you please tell me your full name?");
+    }
+    return;
+  }
 
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.getAttribute('data-tab')).classList.add('active');
-      });
-    });
+  // Phase: name
+  if (STATE.phase === 'name') {
+    const name = extractName(text) || (text.split(' ').length <= 4 && text.length > 2 ? text.trim() : null);
+    if (name) {
+      STATE.name = name; STATE.phase = 'phone'; saveState(); updateProgressBar();
+      const msg = `Thank you, **${name}**! 😊\n\nCould you please share your **phone number** so the official can contact you?`;
+      addMessage('agent', msg); agentSay(`Thank you, ${name}. Could you please share your phone number so the official can reach you?`);
+    } else {
+      const msg = `I'd like to get your name. Could you say something like "My name is John Smith" or just say your full name clearly?`;
+      addMessage('agent', msg); agentSay(msg);
+    }
+    return;
+  }
 
-    const callToggle = document.getElementById('voiceCallToggleBtn');
-    const banner = document.getElementById('liveCallBanner');
-    callToggle.addEventListener('click', () => {
-      inCall = !inCall;
-      if (inCall) {
-        callToggle.classList.add('in-call');
-        document.getElementById('callBtnText').textContent = 'In Call (Click to End)';
-        banner.classList.remove('hidden');
-        secs = 0;
-        timerInt = setInterval(() => {
-          secs++;
-          document.getElementById('callTimer').textContent = `${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
-        }, 1000);
-        const welcome = "Thank you for calling Vittoris AI. I am your autonomous voice operations assistant. How can I assist you today?";
-        appendMsg('agent', `📞 **Live Voice Call Connected.**\n\n*${welcome}*`);
-        speak(welcome);
-      } else {
-        callToggle.classList.remove('in-call');
-        document.getElementById('callBtnText').textContent = 'Start Voice Call';
-        banner.classList.add('hidden');
-        clearInterval(timerInt);
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      }
-    });
+  // Phase: phone
+  if (STATE.phase === 'phone') {
+    const phone = extractPhone(text);
+    if (phone) {
+      STATE.phone = phone; STATE.phase = 'query'; saveState(); updateProgressBar();
+      const msg = `Got it! Phone saved as **${phone}**.\n\nNow, could you briefly describe your **inquiry or the problem** you need help with?\n_(For example: voice agent setup, server pipeline crash, pricing consultation, custom AI infrastructure, etc.)_`;
+      addMessage('agent', msg); agentSay(`Phone number saved as ${phone}. What is your inquiry or the problem you need help with?`);
+    } else {
+      const msg = `I didn't catch a phone number from that. Could you please state it clearly? For example: "My number is 555 019 2834" or just read out the digits.`;
+      addMessage('agent', msg); agentSay(msg);
+    }
+    return;
+  }
 
-    document.getElementById('endCallBtn').addEventListener('click', () => callToggle.click());
+  // Phase: query
+  if (STATE.phase === 'query') {
+    if (text.trim().length >= 5) {
+      STATE.query = text.trim(); STATE.phase = 'date'; saveState(); updateProgressBar();
+      const slots = getSlotSuggestions();
+      const msg = `Understood! I've noted your inquiry:\n📌 _"${STATE.query}"_\n\nLastly, what **appointment date** works best for you? Here are the earliest available slots:\n${slots.join('\n')}\n\n_(You can say "Slot 1", "Slot 2", "Tomorrow at 2 PM", or any date that works)_`;
+      addMessage('agent', msg); agentSay("Noted. Here are some available appointment slots. " + slots.join('. ') + ". Which one works best for you?");
+    } else {
+      const msg = `Could you tell me a bit more about what you need help with? A short description is fine.`;
+      addMessage('agent', msg); agentSay(msg);
+    }
+    return;
+  }
 
-    window.transferTo = function(target) {
-      if (target === 'sarah') appendMsg('user', 'Please transfer me to Sarah Chen for server issues.');
-      else if (target === 'marcus') appendMsg('user', 'Please transfer me to Marcus Vance for voice systems.');
-      else appendMsg('user', 'Please transfer me to Uday Zayn.');
-      document.getElementById('chatForm').dispatchEvent(new Event('submit'));
-    };
-  </script>
+  // Phase: date
+  if (STATE.phase === 'date') {
+    const date = extractDate(text);
+    if (date) {
+      STATE.date = date;
+      const dossier = createDossier(STATE.name, STATE.phone, STATE.query, STATE.date);
+      STATE.phase = 'complete'; saveState(); updateProgressBar();
+
+      const official = dossier.official;
+      const confirmMsg = `### ✅ All Set, ${STATE.name}!\n\nYour appointment and inquiry have been officially recorded.\n\n📋 **Dossier Reference:** \`${dossier.id}\`\n👤 **Name:** ${STATE.name}\n📞 **Phone:** ${STATE.phone}\n💬 **Query:** ${STATE.query}\n📅 **Appointment Date:** ${date}\n👨‍💼 **Assigned Official:** ${official}\n\n> 🔔 **What happens next:** Our officials are currently in closed sessions. As soon as **${official}** clears their schedule, they will receive your complete file — your name, phone number, and inquiry — directly in their dashboard. They will then reach out to you at **${STATE.phone}** to confirm and prepare for your meeting.\n\nIs there anything else I can help you with?`;
+      addMessage('agent', confirmMsg);
+      agentSay(`Perfect, ${STATE.name}! All done. I've locked in your appointment for ${date} and recorded your inquiry. As soon as ${official} clears their schedule, they'll receive your full file and reach out to you at ${STATE.phone}. Looking forward to speaking with you! Is there anything else you need?`);
+
+      // Reset context but keep dossiers
+      STATE.name = null; STATE.phone = null; STATE.query = null; STATE.date = null;
+      STATE.phase = 'greeting'; saveState(); updateProgressBar();
+    } else {
+      const slots = getSlotSuggestions();
+      const msg = `I didn't quite catch a date. Here are some open slots:\n${slots.join('\n')}\n\nWhich slot works best for you?`;
+      addMessage('agent', msg); agentSay("Which of these slots works best for you? " + slots.slice(0,3).join(', '));
+    }
+    return;
+  }
+
+  // Fallback
+  if (STATE.phase === 'complete' || STATE.phase === 'greeting') {
+    STATE.phase = 'greeting'; saveState(); updateProgressBar();
+    const msg = `Of course! Is this a new inquiry? I'll be happy to record your details. Could you tell me your **Full Name** to get started?`;
+    addMessage('agent', msg); agentSay("Of course! Is this a new inquiry? Could you tell me your full name to get started?");
+  }
+}
+
+// =====================================================================
+// TABS
+// =====================================================================
+document.querySelectorAll('.stab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.stab').forEach(b => b.classList.remove('on'));
+    document.querySelectorAll('.spane').forEach(p => p.classList.remove('on'));
+    btn.classList.add('on');
+    document.getElementById(btn.dataset.tab).classList.add('on');
+  });
+});
+
+// =====================================================================
+// INIT
+// =====================================================================
+window.addEventListener('load', () => {
+  initSpeechRecognition();
+  refreshDossiers();
+  updateProgressBar();
+  // Trigger greeting on load
+  setTimeout(() => {
+    agentSay("Hello! Welcome to Vittoris AI. Our company officials are currently in meetings. I am your autonomous voice assistant and I am here to take down your details, record your inquiry, and schedule an appointment for you. Please press the microphone button and tell me your name to get started.");
+  }, 800);
+});
+
+// Voices load async in some browsers
+window.speechSynthesis.onvoiceschanged = () => {};
+</script>
 </body>
 </html>
