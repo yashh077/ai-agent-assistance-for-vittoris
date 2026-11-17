@@ -8,272 +8,160 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #0a0e17;
-      --bg-card: #131b2e;
-      --bg-card2: #0f1724;
+      --bg: #0a0e17; --card: #131b2e; --card2: #0f1724;
       --border: rgba(255,255,255,0.08);
-      --cyan: #06b6d4;
-      --purple: #8b5cf6;
-      --green: #10b981;
-      --amber: #f59e0b;
-      --red: #ef4444;
-      --text: #f3f4f6;
-      --muted: #9ca3af;
-      --sans: 'Inter', sans-serif;
-      --mono: 'JetBrains Mono', monospace;
+      --cyan: #06b6d4; --purple: #8b5cf6;
+      --green: #10b981; --amber: #f59e0b; --red: #ef4444;
+      --text: #f3f4f6; --muted: #9ca3af;
+      --sans: 'Inter',sans-serif; --mono: 'JetBrains Mono',monospace;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; overflow: hidden; }
-    body { background: var(--bg-dark); color: var(--text); font-family: var(--sans); display: flex; flex-direction: column; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;overflow:hidden}
+    body{background:var(--bg);color:var(--text);font-family:var(--sans);display:flex;flex-direction:column}
 
-    /* ── NAVBAR ── */
-    nav {
-      height: 60px; padding: 0 24px;
-      background: rgba(13,18,31,0.95);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      flex-shrink: 0;
-      backdrop-filter: blur(12px);
-    }
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .logo { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, var(--cyan), var(--purple)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; box-shadow: 0 4px 14px rgba(6,182,212,.35); }
-    .brand-name { font-size: 16px; font-weight: 700; letter-spacing: 1px; }
-    .brand-sub { font-size: 10px; color: var(--muted); }
-    .nav-right { display: flex; align-items: center; gap: 12px; }
-    .badge { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 11px; background: rgba(255,255,255,.05); border: 1px solid var(--border); }
-    .dot { width: 7px; height: 7px; border-radius: 50%; }
-    .dot-green { background: var(--green); box-shadow: 0 0 7px var(--green); }
-    .dot-amber { background: var(--amber); box-shadow: 0 0 7px var(--amber); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{ opacity:1; } 50%{ opacity:.4; } }
+    /* NAV */
+    nav{height:60px;padding:0 24px;background:rgba(13,18,31,.95);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;backdrop-filter:blur(12px)}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;box-shadow:0 4px 14px rgba(6,182,212,.35)}
+    .brand-name{font-size:16px;font-weight:700;letter-spacing:1px}
+    .brand-sub{font-size:10px;color:var(--muted)}
+    .nav-right{display:flex;align-items:center;gap:12px}
+    .nbadge{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:11px;background:rgba(255,255,255,.05);border:1px solid var(--border)}
+    .dot{width:7px;height:7px;border-radius:50%}
+    .dot-green{background:var(--green);box-shadow:0 0 7px var(--green)}
+    .dot-amber{background:var(--amber);box-shadow:0 0 7px var(--amber);animation:blink 2s infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
 
-    /* ── MAIN LAYOUT ── */
-    .layout { display: flex; flex: 1; overflow: hidden; }
+    /* LAYOUT */
+    .layout{display:flex;flex:1;overflow:hidden}
 
-    /* ── LEFT: CHAT / VOICE ── */
-    .chat-col {
-      flex: 1; display: flex; flex-direction: column;
-      border-right: 1px solid var(--border);
-      background: #0d121f;
-      min-width: 0;
-    }
+    /* CHAT COLUMN */
+    .chat-col{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--border);background:#0d121f;min-width:0}
 
-    .chat-top {
-      padding: 14px 20px; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      background: rgba(19,27,46,.5);
-    }
-    .agent-info { display: flex; align-items: center; gap: 10px; }
-    .agent-avatar {
-      width: 36px; height: 36px; border-radius: 8px; font-size: 20px;
-      background: rgba(139,92,246,.15); border: 1px solid rgba(139,92,246,.4);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .agent-info h3 { font-size: 14px; font-weight: 600; }
-    .agent-info p { font-size: 11px; color: var(--muted); }
+    /* CALL BANNER */
+    .call-banner{padding:9px 20px;display:none;align-items:center;justify-content:space-between;background:linear-gradient(90deg,rgba(5,150,105,.18),rgba(13,18,31,.95),rgba(139,92,246,.18));border-bottom:1px solid rgba(16,185,129,.3)}
+    .call-banner.on{display:flex}
+    .cpulse{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:cpulse 1.5s infinite}
+    @keyframes cpulse{0%{transform:scale(.95);box-shadow:0 0 0 0 rgba(16,185,129,.7)}70%{transform:scale(1.2);box-shadow:0 0 0 8px rgba(16,185,129,0)}100%{transform:scale(.95)}}
+    .ctimer{font-family:var(--mono);color:#34d399;margin-left:6px}
+    .waves{display:flex;gap:3px;align-items:center;height:24px}
+    .wave{width:4px;border-radius:2px;height:5px;transition:height .15s}
+    .waves.listen .wave{animation:wa .9s infinite ease-in-out;background:var(--red)}
+    .waves.speak .wave{animation:wa 1.1s infinite ease-in-out;background:var(--cyan)}
+    .wave:nth-child(1){animation-delay:.05s}.wave:nth-child(2){animation-delay:.2s}
+    .wave:nth-child(3){animation-delay:.12s}.wave:nth-child(4){animation-delay:.35s}
+    .wave:nth-child(5){animation-delay:.18s}
+    @keyframes wa{0%,100%{height:4px}50%{height:22px}}
+    .cstatus{font-size:11px;color:var(--muted)}
 
-    /* ── VOICE CALL BANNER ── */
-    .call-banner {
-      padding: 10px 20px;
-      display: none; align-items: center; justify-content: space-between;
-      background: linear-gradient(90deg, rgba(5,150,105,.18), rgba(13,18,31,.95), rgba(139,92,246,.18));
-      border-bottom: 1px solid rgba(16,185,129,.3);
-    }
-    .call-banner.active { display: flex; }
-    .call-left { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; }
-    .call-pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); animation: callPulse 1.5s infinite; }
-    @keyframes callPulse { 0%{ transform:scale(.95); box-shadow:0 0 0 0 rgba(16,185,129,.7); } 70%{ transform:scale(1.2); box-shadow:0 0 0 8px rgba(16,185,129,0); } 100%{ transform:scale(.95); } }
-    .call-timer { font-family: var(--mono); color: #34d399; margin-left:6px; }
-    .waves { display: flex; gap: 3px; align-items: center; height: 24px; }
-    .wave { width: 4px; background: var(--cyan); border-radius: 2px; height: 6px; transition: height .15s; }
-    .waves.listening .wave { animation: waveAnim 0.9s infinite ease-in-out; background: var(--red); }
-    .waves.speaking .wave { animation: waveAnim 1.1s infinite ease-in-out; background: var(--cyan); }
-    .waves .wave:nth-child(1){ animation-delay:.05s; } .waves .wave:nth-child(2){ animation-delay:.2s; }
-    .waves .wave:nth-child(3){ animation-delay:.12s; } .waves .wave:nth-child(4){ animation-delay:.35s; }
-    .waves .wave:nth-child(5){ animation-delay:.18s; }
-    @keyframes waveAnim { 0%,100%{ height:4px; } 50%{ height:22px; } }
-    .call-status-text { font-size: 11px; color: var(--muted); }
+    /* CHAT HEADER */
+    .chat-top{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(19,27,46,.5)}
+    .agent-info{display:flex;align-items:center;gap:10px}
+    .avatar{width:36px;height:36px;border-radius:8px;font-size:20px;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.4);display:flex;align-items:center;justify-content:center}
+    .agent-info h3{font-size:14px;font-weight:600}
+    .agent-info p{font-size:11px;color:var(--muted)}
 
-    /* ── CHAT MESSAGES ── */
-    .messages {
-      flex: 1; overflow-y: auto; padding: 20px;
-      display: flex; flex-direction: column; gap: 14px;
-    }
-    .msg { display: flex; max-width: 80%; font-size: 14px; line-height: 1.6; }
-    .msg.user { align-self: flex-end; }
-    .msg.agent { align-self: flex-start; }
-    .msg.system { align-self: center; max-width: 90%; }
-    .bubble {
-      padding: 12px 16px; border-radius: 14px;
-    }
-    .msg.user .bubble { background: linear-gradient(135deg,#2563eb,#1d4ed8); border-radius: 14px 14px 2px 14px; }
-    .msg.agent .bubble { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px 14px 14px 2px; }
-    .msg.system .bubble { background: rgba(139,92,246,.1); border: 1px solid rgba(139,92,246,.3); color: #c4b5fd; border-radius: 10px; text-align:center; font-size:13px; }
+    /* PROGRESS BAR */
+    .prog-bar{padding:10px 20px;border-bottom:1px solid var(--border)}
+    .prog-wrap{background:rgba(255,255,255,.05);border-radius:6px;padding:10px 14px;border:1px solid var(--border)}
+    .prog-wrap p{font-size:11px;color:var(--muted);margin-bottom:8px}
+    .steps{display:flex;gap:6px}
+    .step{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.1);transition:background .3s}
+    .step.done{background:var(--green)}
+    .step.active{background:var(--cyan);animation:steppulse 1s infinite}
+    @keyframes steppulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-    /* ── LIVE TRANSCRIPT PREVIEW ── */
-    .live-transcript {
-      display: none;
-      margin: 0 20px;
-      padding: 10px 14px;
-      background: rgba(239,68,68,.08);
-      border: 1px dashed rgba(239,68,68,.4);
-      border-radius: 10px;
-      font-size: 13px;
-      color: #fca5a5;
-      font-style: italic;
-      min-height: 36px;
-    }
-    .live-transcript.active { display: block; }
-    .live-transcript::before { content: '🎤 '; }
+    /* MESSAGES */
+    .messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px}
+    .msg{display:flex;max-width:82%;font-size:14px;line-height:1.6}
+    .msg.user{align-self:flex-end}.msg.agent{align-self:flex-start}.msg.system{align-self:center;max-width:92%}
+    .bubble{padding:12px 16px;border-radius:14px}
+    .msg.user .bubble{background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:14px 14px 2px 14px}
+    .msg.agent .bubble{background:var(--card);border:1px solid var(--border);border-radius:14px 14px 14px 2px}
+    .msg.system .bubble{background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.3);color:#c4b5fd;border-radius:10px;text-align:center;font-size:13px}
 
-    /* ── BOTTOM CONTROLS ── */
-    .bottom-bar {
-      padding: 16px 20px; border-top: 1px solid var(--border);
-      background: var(--bg-card); display: flex; flex-direction: column; gap: 10px;
-    }
+    /* LIVE TRANSCRIPT */
+    .live-box{display:none;margin:0 20px 8px;padding:10px 14px;background:rgba(239,68,68,.07);border:1.5px dashed rgba(239,68,68,.45);border-radius:10px;font-size:13px;color:#fca5a5;font-style:italic;min-height:38px;word-break:break-word}
+    .live-box.on{display:block}
+    .live-box::before{content:'🎤  '}
 
-    /* MIC ROW — normal state */
-    .mic-row { display: flex; align-items: center; gap: 12px; }
-    .mic-main {
-      width: 56px; height: 56px; border-radius: 50%; border: none; cursor: pointer;
-      background: linear-gradient(135deg, #059669, #10b981);
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 18px rgba(16,185,129,.4);
-      transition: all .2s; flex-shrink: 0;
-    }
-    .mic-main:hover { transform: scale(1.06); }
-    .mic-main.listening {
-      background: linear-gradient(135deg,#dc2626,#ef4444);
-      box-shadow: 0 4px 24px rgba(239,68,68,.6);
-      animation: micPulse 1s infinite;
-    }
-    @keyframes micPulse { 0%,100%{ box-shadow:0 4px 18px rgba(239,68,68,.5); } 50%{ box-shadow:0 0 0 12px rgba(239,68,68,.15), 0 4px 24px rgba(239,68,68,.8); } }
-    .mic-main svg { width: 26px; height: 26px; }
-    .mic-hint { flex: 1; font-size: 13px; color: var(--muted); }
-    .mic-hint strong { color: var(--text); display: block; margin-bottom: 2px; }
+    /* DEBUG PANEL */
+    .debug-panel{display:none;margin:0 20px 8px;padding:8px 12px;background:rgba(6,182,212,.05);border:1px solid rgba(6,182,212,.2);border-radius:8px;font-family:var(--mono);font-size:10px;color:var(--muted);max-height:52px;overflow:hidden}
+    .debug-panel.on{display:block}
 
-    /* ── DONE SPEAKING BUTTON (shown during recording) ── */
-    .done-speaking-row {
-      display: none;
-      align-items: center;
-      gap: 12px;
-    }
-    .done-speaking-row.active { display: flex; }
-    .done-btn {
-      flex: 1;
-      padding: 14px 20px;
-      background: linear-gradient(135deg, #7c3aed, #8b5cf6);
-      border: none;
-      border-radius: 12px;
-      color: white;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: 0 4px 20px rgba(139,92,246,.4);
-      transition: all .2s;
-      letter-spacing: .3px;
-    }
-    .done-btn:hover { transform: scale(1.02); box-shadow: 0 6px 28px rgba(139,92,246,.6); }
-    .done-btn:active { transform: scale(0.98); }
-    .done-btn .done-icon { font-size: 20px; }
+    /* BOTTOM BAR */
+    .bottom-bar{padding:14px 20px;border-top:1px solid var(--border);background:var(--card);display:flex;flex-direction:column;gap:10px}
 
-    .cancel-btn {
-      width: 46px; height: 46px;
-      background: rgba(239,68,68,.12);
-      border: 1px solid rgba(239,68,68,.3);
-      border-radius: 10px;
-      color: var(--red);
-      font-size: 18px;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all .2s;
-      flex-shrink: 0;
-    }
-    .cancel-btn:hover { background: rgba(239,68,68,.22); }
+    /* MIC ROW */
+    .mic-row{display:flex;align-items:center;gap:14px}
+    .mic-btn{width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#059669,#10b981);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(16,185,129,.4);transition:all .2s;flex-shrink:0}
+    .mic-btn:hover{transform:scale(1.07)}
+    .mic-btn.listening{background:linear-gradient(135deg,#dc2626,#ef4444);box-shadow:0 4px 24px rgba(239,68,68,.55);animation:micpulse 1s infinite}
+    @keyframes micpulse{0%,100%{box-shadow:0 4px 18px rgba(239,68,68,.5)}50%{box-shadow:0 0 0 14px rgba(239,68,68,.1),0 4px 24px rgba(239,68,68,.8)}}
+    .mic-btn.disabled{opacity:.35;cursor:not-allowed;animation:none}
+    .mic-btn svg{width:27px;height:27px}
+    .mic-hint{flex:1;font-size:13px;color:var(--muted)}
+    .mic-hint strong{color:var(--text);display:block;margin-bottom:2px;font-size:14px}
+
+    /* DONE ROW */
+    .done-row{display:none;align-items:center;gap:10px}
+    .done-row.on{display:flex}
+    .done-btn{flex:1;padding:15px 20px;background:linear-gradient(135deg,#7c3aed,#8b5cf6);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 20px rgba(139,92,246,.4);transition:all .2s;letter-spacing:.3px}
+    .done-btn:hover{transform:scale(1.02);box-shadow:0 6px 30px rgba(139,92,246,.6)}
+    .done-btn:active{transform:scale(.98)}
+    .cancel-btn{width:48px;height:48px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;color:var(--red);font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+    .cancel-btn:hover{background:rgba(239,68,68,.2)}
 
     /* TEXT ROW */
-    .text-row { display: flex; gap: 10px; }
-    .text-row input {
-      flex: 1; background: rgba(0,0,0,.3); border: 1px solid var(--border);
-      border-radius: 10px; padding: 10px 14px; color: white; font-size: 13px; outline: none;
-    }
-    .text-row input:focus { border-color: var(--cyan); }
-    .text-row button {
-      background: linear-gradient(135deg,var(--cyan),#0284c7); color: white;
-      border: none; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer;
-    }
+    .text-row{display:flex;gap:10px}
+    .text-row input{flex:1;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:#fff;font-size:13px;outline:none;font-family:var(--sans)}
+    .text-row input:focus{border-color:var(--cyan)}
+    .text-row input::placeholder{color:var(--muted)}
+    .send-btn{background:linear-gradient(135deg,var(--cyan),#0284c7);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer}
 
-    /* ── RIGHT SIDEBAR ── */
-    .sidebar { width: 400px; display: flex; flex-direction: column; background: #0f1524; flex-shrink: 0; }
-    .stabs { display: flex; border-bottom: 1px solid var(--border); background: rgba(0,0,0,.2); }
-    .stab { flex: 1; padding: 12px 4px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); font-size: 11.5px; font-weight: 500; cursor: pointer; transition: all .2s; }
-    .stab.on { color: var(--cyan); border-bottom-color: var(--cyan); background: rgba(6,182,212,.05); }
-    .spane { display: none; flex: 1; overflow-y: auto; padding: 16px; flex-direction: column; gap: 12px; }
-    .spane.on { display: flex; }
+    /* SIDEBAR */
+    .sidebar{width:390px;display:flex;flex-direction:column;background:#0f1524;flex-shrink:0}
+    .stabs{display:flex;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2)}
+    .stab{flex:1;padding:12px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-size:11.5px;font-weight:500;cursor:pointer;transition:all .2s}
+    .stab.on{color:var(--cyan);border-bottom-color:var(--cyan);background:rgba(6,182,212,.05)}
+    .spane{display:none;flex:1;overflow-y:auto;padding:16px;flex-direction:column;gap:12px}
+    .spane.on{display:flex}
+    .scard{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px}
+    .scard.pending{border-left:4px solid var(--amber)}
+    .scard.confirmed{border-left:4px solid var(--green)}
+    .scard.cleared{border-left:4px solid var(--cyan)}
+    .scard-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+    .scard-title{font-size:13px;font-weight:600}
+    .scard-sub{font-size:11px;color:var(--muted);margin-bottom:6px}
+    .sbadge{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600}
+    .sbadge.amber{background:rgba(245,158,11,.2);color:var(--amber)}
+    .sbadge.green{background:rgba(16,185,129,.2);color:var(--green)}
+    .sbadge.cyan{background:rgba(6,182,212,.2);color:var(--cyan)}
+    .sep{border:none;border-top:1px solid var(--border);margin:5px 0}
+    .drow{font-size:11px;margin-bottom:3px}
+    .drow span{color:var(--muted)}
+    .off-row{display:flex;align-items:center;gap:10px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:8px}
+    .off-av{font-size:24px}
+    .off-name{font-size:13px;font-weight:600}
+    .off-role{font-size:11px;color:var(--muted)}
+    .off-st{margin-left:auto;font-size:10px;padding:3px 8px;border-radius:4px;font-weight:600}
+    .st-busy{background:rgba(245,158,11,.2);color:var(--amber)}
+    .st-avail{background:rgba(16,185,129,.2);color:var(--green)}
+    .sim-label{font-size:11px;color:var(--muted);margin-bottom:8px}
+    .sim-btn{width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);font-size:12px;cursor:pointer;margin-bottom:8px;transition:background .2s}
+    .sim-btn:hover{background:rgba(255,255,255,.1)}
+    .sim-btn.danger{border-color:rgba(239,68,68,.3);color:var(--red);background:rgba(239,68,68,.07)}
+    .sim-btn.success{border-color:rgba(16,185,129,.3);color:var(--green);background:rgba(16,185,129,.07)}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
+    @media(max-width:768px){.sidebar{display:none}}
 
-    /* Cards in sidebar */
-    .scard { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
-    .scard.pending { border-left: 4px solid var(--amber); }
-    .scard.confirmed { border-left: 4px solid var(--green); }
-    .scard.cleared { border-left: 4px solid var(--cyan); }
-    .scard-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-    .scard-sub { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
-    .scard-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
-    .sbadge { font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
-    .sbadge.amber { background: rgba(245,158,11,.2); color: var(--amber); }
-    .sbadge.green { background: rgba(16,185,129,.2); color: var(--green); }
-    .sbadge.cyan { background: rgba(6,182,212,.2); color: var(--cyan); }
-    .sep { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
-    .detail-row { font-size: 11px; margin-bottom: 3px; }
-    .detail-row span { color: var(--muted); }
-
-    /* Officials panel */
-    .official-row { display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; }
-    .official-avatar { font-size: 24px; }
-    .official-name { font-size: 13px; font-weight: 600; }
-    .official-role { font-size: 11px; color: var(--muted); }
-    .official-status { margin-left: auto; font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
-    .os-busy { background: rgba(245,158,11,.2); color: var(--amber); }
-    .os-avail { background: rgba(16,185,129,.2); color: var(--green); }
-
-    /* Sim controls */
-    .sim-label { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
-    .sim-btn { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: rgba(255,255,255,.05); color: var(--text); font-size: 12px; cursor: pointer; margin-bottom: 8px; transition: background .2s; }
-    .sim-btn:hover { background: rgba(255,255,255,.1); }
-    .sim-btn.danger { border-color: rgba(239,68,68,.3); color: var(--red); background: rgba(239,68,68,.07); }
-    .sim-btn.success { border-color: rgba(16,185,129,.3); color: var(--green); background: rgba(16,185,129,.07); }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 3px; }
-
-    /* Progress bar for intake */
-    .intake-progress { background: rgba(255,255,255,.05); border-radius: 6px; padding: 10px 14px; border: 1px solid var(--border); }
-    .intake-progress p { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
-    .steps { display: flex; gap: 6px; }
-    .step { flex: 1; height: 4px; border-radius: 2px; background: rgba(255,255,255,.1); transition: background .3s; }
-    .step.done { background: var(--green); }
-    .step.active { background: var(--cyan); animation: stepPulse 1s infinite; }
-    @keyframes stepPulse { 0%,100%{ opacity:1; } 50%{ opacity:.5; } }
-
-    /* Permission overlay */
-    .perm-banner {
-      display: none;
-      margin: 8px 20px;
-      padding: 10px 14px;
-      background: rgba(245,158,11,.1);
-      border: 1px solid rgba(245,158,11,.35);
-      border-radius: 8px;
-      font-size: 12px;
-      color: var(--amber);
-      text-align: center;
-    }
-    .perm-banner.show { display: block; }
-
-    @media(max-width: 768px) { .sidebar { display: none; } }
+    /* ALERT BANNER */
+    .alert-banner{display:none;margin:8px 20px;padding:10px 14px;border-radius:8px;font-size:12px;text-align:center}
+    .alert-banner.on{display:block}
+    .alert-banner.warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.35);color:var(--amber)}
+    .alert-banner.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);color:var(--red)}
+    .alert-banner.info{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.3);color:var(--cyan)}
   </style>
 </head>
 <body>
@@ -287,79 +175,79 @@
     </div>
   </div>
   <div class="nav-right">
-    <div class="badge"><span class="dot dot-amber" id="officialDot"></span><span id="officialStatusBadge">Officials: In Meetings</span></div>
-    <div class="badge"><span class="dot dot-green"></span>Agent Live 24/7</div>
+    <div class="nbadge"><span class="dot dot-amber" id="offDot"></span><span id="offBadge">Officials: In Meetings</span></div>
+    <div class="nbadge"><span class="dot dot-green"></span>Agent Live 24/7</div>
   </div>
 </nav>
 
 <div class="layout">
-
-  <!-- ── LEFT: VOICE CHAT ── -->
   <div class="chat-col">
 
     <!-- Call Banner -->
     <div class="call-banner" id="callBanner">
-      <div class="call-left">
-        <div class="call-pulse"></div>
-        <div>VOICE SESSION ACTIVE <span class="call-timer" id="callTimer">00:00</span></div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600">
+        <div class="cpulse"></div>
+        VOICE SESSION ACTIVE <span class="ctimer" id="callTimer">00:00</span>
       </div>
       <div class="waves" id="waveBars">
         <div class="wave"></div><div class="wave"></div><div class="wave"></div>
         <div class="wave"></div><div class="wave"></div>
       </div>
-      <div class="call-status-text" id="callStatusText">Tap the mic to speak</div>
+      <div class="cstatus" id="callStatus">Ready</div>
     </div>
 
     <!-- Agent header -->
     <div class="chat-top">
       <div class="agent-info">
-        <div class="agent-avatar">⚡</div>
+        <div class="avatar">⚡</div>
         <div>
           <h3>Vittoris Autonomous Voice Agent</h3>
           <p>Speech-to-Speech · Customer Intake · Appointment Rescheduling · Official Queue</p>
         </div>
       </div>
-      <button class="sim-btn" style="width:auto;padding:5px 12px;font-size:11px;margin:0;" onclick="resetSession()">New Session</button>
+      <button class="sim-btn" style="width:auto;padding:5px 12px;font-size:11px;margin:0" onclick="resetSession()">New Session</button>
     </div>
 
-    <!-- Intake Progress -->
-    <div style="padding:10px 20px; border-bottom:1px solid var(--border);">
-      <div class="intake-progress">
-        <p>Customer Intake Progress — <span id="progressLabel">Collecting caller details…</span></p>
+    <!-- Progress -->
+    <div class="prog-bar">
+      <div class="prog-wrap">
+        <p>Customer Intake Progress — <span id="progLabel">Collecting caller details…</span></p>
         <div class="steps">
-          <div class="step active" id="step0" title="Name"></div>
-          <div class="step" id="step1" title="Phone"></div>
-          <div class="step" id="step2" title="Query"></div>
-          <div class="step" id="step3" title="Appointment Date"></div>
+          <div class="step active" id="s0" title="Name"></div>
+          <div class="step" id="s1" title="Phone"></div>
+          <div class="step" id="s2" title="Query"></div>
+          <div class="step" id="s3" title="Date"></div>
         </div>
       </div>
     </div>
 
-    <!-- Permission warning banner -->
-    <div class="perm-banner" id="permBanner">
-      ⚠️ Microphone access was denied. Please click the 🔒 lock icon in your browser address bar → allow microphone → then refresh this page.
-    </div>
+    <!-- Alert banner -->
+    <div class="alert-banner" id="alertBanner"></div>
 
     <!-- Messages -->
     <div class="messages" id="messages">
       <div class="msg system">
         <div class="bubble">
-          👋 <strong>Welcome to Vittoris AI.</strong> Our company officials are currently in meetings.<br>
-          I am your autonomous voice assistant. I will take down your name, phone number, and query, then lock in an appointment date for you. When officials clear their schedule, they'll be notified immediately with your complete file.<br><br>
-          🎙️ <strong>Press the green mic button below to start speaking. When you're done, press the purple "Done Speaking" button.</strong>
+          👋 <strong>Welcome to Vittoris AI.</strong> Officials are currently in meetings.<br>
+          I am your autonomous voice assistant — I'll collect your name, phone, query and book an appointment.<br><br>
+          🎙️ <strong>Press the green mic → speak → press the purple "Done Speaking" button to send.</strong><br>
+          Or simply type below if you prefer.
         </div>
       </div>
     </div>
 
-    <!-- Live Transcript Preview -->
-    <div class="live-transcript" id="liveTranscript">Listening…</div>
+    <!-- Live transcript preview (shown while recording) -->
+    <div class="live-box" id="liveBox">Listening… speak now</div>
 
-    <!-- Bottom Controls -->
+    <!-- Debug strip (hidden by default, shows on error) -->
+    <div class="debug-panel" id="debugPanel"></div>
+
+    <!-- Bottom Bar -->
     <div class="bottom-bar">
 
-      <!-- Normal mic row (shown when NOT listening) -->
+      <!-- Mic row: shown when NOT recording -->
       <div class="mic-row" id="micRow">
-        <button class="mic-main" id="micBtn" title="Click to start speaking">
+        <button class="mic-btn" id="micBtn" title="Click to start speaking">
           <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
             <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
@@ -367,29 +255,28 @@
           </svg>
         </button>
         <div class="mic-hint">
-          <strong id="micHintTitle">🎙️ Click Mic to Start Speaking</strong>
-          <span id="micHintSub">The agent listens, then replies with voice when you press Done</span>
+          <strong id="micTitle">🎙️ Click to Start Speaking</strong>
+          <span id="micSub">The agent listens to you, then replies with voice when you press Done</span>
         </div>
       </div>
 
-      <!-- Done Speaking row (shown WHILE listening) -->
-      <div class="done-speaking-row" id="doneSpeakingRow">
-        <button class="done-btn" id="doneBtn" title="Stop recording and send your message">
-          <span class="done-icon">✅</span>
-          Done Speaking — Send to Agent
+      <!-- Done row: shown WHILE recording -->
+      <div class="done-row" id="doneRow">
+        <button class="done-btn" id="doneBtn">
+          <span style="font-size:20px">✅</span> Done Speaking — Send to Agent
         </button>
         <button class="cancel-btn" id="cancelBtn" title="Cancel recording">✕</button>
       </div>
 
       <!-- Text fallback -->
       <div class="text-row">
-        <input type="text" id="textInput" placeholder="Or type your message here and press Enter…" />
-        <button onclick="sendText()">Send</button>
+        <input type="text" id="textInput" placeholder="Or type your message here and press Enter…">
+        <button class="send-btn" onclick="sendText()">Send</button>
       </div>
     </div>
   </div>
 
-  <!-- ── RIGHT SIDEBAR ── -->
+  <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="stabs">
       <button class="stab on" data-tab="tab-dossiers">📋 Dossiers</button>
@@ -397,700 +284,544 @@
       <button class="stab" data-tab="tab-sim">⚙️ Simulator</button>
     </div>
 
-    <!-- Tab: Dossiers -->
     <div class="spane on" id="tab-dossiers">
-      <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">
-        Customer dossiers recorded in officials' absence. Officials are notified when their schedule clears.
-      </div>
-      <div id="dossiersList"><p style="font-size:12px;color:var(--muted);">No dossiers yet. Complete a voice intake to create one.</p></div>
+      <div style="font-size:11px;color:var(--muted)">Customer dossiers recorded in officials' absence. Officials are notified when schedule clears.</div>
+      <div id="dossiersList"><p style="font-size:12px;color:var(--muted)">No dossiers yet. Complete a voice intake to create one.</p></div>
     </div>
 
-    <!-- Tab: Officials -->
     <div class="spane" id="tab-officials">
-      <div style="font-size:12px;font-weight:600;margin-bottom:12px;">Company Officials — Live Status</div>
-      <div id="officialsRoster">
-        <div class="official-row" style="margin-bottom:8px;">
-          <div class="official-avatar">👨‍💼</div>
-          <div><div class="official-name">Uday Zayn</div><div class="official-role">Founder &amp; Lead AI Architect</div></div>
-          <div class="official-status os-busy" id="udayStatus">IN MEETINGS</div>
-        </div>
-        <div class="official-row" style="margin-bottom:8px;">
-          <div class="official-avatar">👩‍💻</div>
-          <div><div class="official-name">Sarah Chen</div><div class="official-role">Head of Enterprise Integrations</div></div>
-          <div class="official-status os-busy" id="sarahStatus">IN MEETINGS</div>
-        </div>
-        <div class="official-row">
-          <div class="official-avatar">👨‍🔧</div>
-          <div><div class="official-name">Marcus Vance</div><div class="official-role">Senior Solutions Engineer</div></div>
-          <div class="official-status os-busy" id="marcusStatus">IN MEETINGS</div>
-        </div>
-      </div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:12px">Company Officials — Live Status</div>
+      <div class="off-row" style="margin-bottom:8px"><div class="off-av">👨‍💼</div><div><div class="off-name">Uday Zayn</div><div class="off-role">Founder &amp; Lead AI Architect</div></div><div class="off-st st-busy" id="st-uday">IN MEETINGS</div></div>
+      <div class="off-row" style="margin-bottom:8px"><div class="off-av">👩‍💻</div><div><div class="off-name">Sarah Chen</div><div class="off-role">Head of Enterprise Integrations</div></div><div class="off-st st-busy" id="st-sarah">IN MEETINGS</div></div>
+      <div class="off-row"><div class="off-av">👨‍🔧</div><div><div class="off-name">Marcus Vance</div><div class="off-role">Senior Solutions Engineer</div></div><div class="off-st st-busy" id="st-marcus">IN MEETINGS</div></div>
     </div>
 
-    <!-- Tab: Simulator -->
     <div class="spane" id="tab-sim">
-      <p class="sim-label">Simulate scenarios to test the voice agent behavior:</p>
-      <button class="sim-btn success" onclick="simClearSchedule()">📋 Simulate: Officials Clear Their Schedule<br><small style="opacity:.7">Triggers notification of all pending dossiers to leadership</small></button>
+      <p class="sim-label">Simulate scenarios:</p>
+      <button class="sim-btn success" onclick="simClear()">📋 Officials Clear Their Schedule<br><small style="opacity:.7">Triggers notification of all pending dossiers</small></button>
       <hr class="sep">
-      <p class="sim-label">Test flows via text:</p>
-      <button class="sim-btn" onclick="simReschedule()">📅 Test: "I need to reschedule my appointment"</button>
-      <button class="sim-btn" onclick="simNewIntake()">🎙️ Test: "Hello, I need help scheduling a consultation"</button>
+      <p class="sim-label">Test flows (via text):</p>
+      <button class="sim-btn" onclick="inject('I need to reschedule my appointment')">📅 Reschedule appointment</button>
+      <button class="sim-btn" onclick="inject('Hello I need help scheduling a consultation')">🎙️ New intake request</button>
       <hr class="sep">
       <p class="sim-label">Reset:</p>
-      <button class="sim-btn danger" onclick="resetSession()">🔄 Reset Voice Session &amp; Clear Context</button>
+      <button class="sim-btn danger" onclick="resetSession()">🔄 Reset Session &amp; Clear Context</button>
     </div>
   </div>
-
 </div>
 
 <script>
-// =====================================================================
-// STATE
-// =====================================================================
-const SESSION_KEY = 'vittoris_session_v4';
-let STATE = loadState();
-let isMicListening = false;
-let isSpeaking = false;
-let callActive = false;
-let callSeconds = 0;
-let callTimerInt = null;
-let recognition = null;
-let accumulatedTranscript = '';  // collects interim results
-let micPermGranted = false;
+/* ===================================================================
+   VITTORIS AI — VOICE AGENT ENGINE v5
+   Speech Recognition fix: no getUserMedia conflict, continuous=false
+   with smart restart, proper accumulated transcript, Done button.
+=================================================================== */
 
-function defaultState() {
-  return {
-    phase: 'greeting',
-    name: null, phone: null, query: null, date: null,
-    rescheduleId: null,
-    dossiers: []
-  };
-}
-function loadState() {
-  try { return JSON.parse(localStorage.getItem(SESSION_KEY)) || defaultState(); } catch(e) { return defaultState(); }
-}
-function saveState() { localStorage.setItem(SESSION_KEY, JSON.stringify(STATE)); }
+// ── STATE ──────────────────────────────────────────────────────────
+const SK = 'vtrs_v5';
+let S = loadS();
+function defaultS(){return{phase:'greeting',name:null,phone:null,query:null,date:null,rescId:null,dossiers:[]}}
+function loadS(){try{return JSON.parse(localStorage.getItem(SK))||defaultS()}catch(e){return defaultS()}}
+function saveS(){localStorage.setItem(SK,JSON.stringify(S))}
+function resetSession(){S=defaultS();saveS();$('messages').innerHTML='';addMsg('system','🔄 Session reset. Ready for a new caller.');agentSay('Session reset. Ready for a new inquiry. Press the microphone button and tell me your name to get started.');updateProg();refreshDossiers()}
 
-function resetSession() {
-  STATE = defaultState(); saveState();
-  document.getElementById('messages').innerHTML = '';
-  addMessage('system', '🔄 Session reset. Ready for a new caller.');
-  agentSay("Session reset. I am ready for a new inquiry. Press the microphone button and tell me your name and what you need help with today.");
-  updateProgressBar(); refreshDossiers();
+// ── HELPERS ────────────────────────────────────────────────────────
+function $(id){return document.getElementById(id)}
+function dbg(msg){
+  const p=$('debugPanel');
+  const t=new Date().toLocaleTimeString('en',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  p.textContent=`[${t}] ${msg}`;
+  p.classList.add('on');
 }
 
-// =====================================================================
-// SPEECH RECOGNITION — FIXED
-// =====================================================================
-function buildRecognition() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+// ── MIC / SPEECH STATE ─────────────────────────────────────────────
+let recognition = null;      // current SpeechRecognition instance
+let isListening  = false;     // are we in a recording session?
+let isSpeaking   = false;
+let accumulated  = '';        // transcript built across multiple onresult events
+let callActive   = false;
+let callSecs     = 0;
+let callTimer    = null;
+let restartGuard = false;     // prevents double-restarts
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+// ── CHECK BROWSER SUPPORT ──────────────────────────────────────────
+window.addEventListener('load', () => {
+  if (!SR) {
+    $('micBtn').classList.add('disabled');
+    $('micTitle').textContent = '❌ Browser not supported';
+    $('micSub').textContent   = 'Please open this page in Google Chrome or Microsoft Edge — Firefox does not support Web Speech API.';
+    showAlert('⚠️ Your browser does not support voice input. Please use Chrome or Edge.','warn');
+  }
+  refreshDossiers();
+  updateProg();
+  setTimeout(()=>agentSay('Hello! Welcome to Vittoris AI. Our officials are currently in meetings. I am your autonomous voice assistant. Press the green microphone button, speak your message, then press the purple Done Speaking button to send.'), 900);
+});
+
+// Voices load async in some browsers
+if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+
+// ── CREATE RECOGNITION INSTANCE ────────────────────────────────────
+// Called fresh every time we need one — most reliable approach.
+function newRecognition() {
   if (!SR) return null;
   const rec = new SR();
   rec.lang = 'en-US';
-  rec.interimResults = true;   // show live transcript as user speaks
-  rec.continuous = true;        // keep recording until user clicks Done
+  rec.continuous = false;      // simpler + more reliable than continuous:true
+  rec.interimResults = true;   // show live words as they're recognised
   rec.maxAlternatives = 1;
+
+  rec.onstart = () => {
+    dbg('Recognition started — speak now');
+    setStatus('🔴 Recording… speak clearly');
+    setWave('listen');
+  };
 
   rec.onresult = (e) => {
     let interim = '';
-    let final = '';
     for (let i = e.resultIndex; i < e.results.length; i++) {
       const t = e.results[i][0].transcript;
-      if (e.results[i].isFinal) { final += t; }
-      else { interim += t; }
+      if (e.results[i].isFinal) {
+        accumulated += (accumulated ? ' ' : '') + t;
+        dbg('Final chunk: "' + t + '"');
+      } else {
+        interim = t;
+      }
     }
-    if (final) accumulatedTranscript += (accumulatedTranscript ? ' ' : '') + final;
-    // Show live preview
-    const preview = (accumulatedTranscript + (interim ? ' ' + interim : '')).trim();
-    document.getElementById('liveTranscript').textContent = preview || 'Listening…';
+    // Show live preview in the red dashed box
+    const preview = (accumulated + (interim ? ' ' + interim : '')).trim();
+    $('liveBox').textContent = preview || 'Listening… speak now';
   };
 
   rec.onerror = (e) => {
-    console.error('SpeechRecognition error:', e.error);
+    dbg('Error: ' + e.error);
     if (e.error === 'not-allowed' || e.error === 'permission-denied') {
-      document.getElementById('permBanner').classList.add('show');
-      setMicHint('⛔ Microphone permission denied', 'Allow microphone access in your browser, then refresh.');
+      showAlert('⛔ Microphone permission denied. Click the 🔒 lock icon in your browser address bar → Allow microphone → Refresh the page.','err');
+      stopListeningUI();
     } else if (e.error === 'no-speech') {
-      // no-speech is non-fatal with continuous mode — just continue
+      // no-speech is non-fatal — just restart silently
+      dbg('No speech detected — restarting…');
+      scheduleRestart();
+    } else if (e.error === 'audio-capture') {
+      showAlert('🎤 No microphone found. Please plug in a microphone and try again.','err');
+      stopListeningUI();
     } else if (e.error === 'network') {
-      setMicHint('⚠️ Network error', 'Check your internet connection.');
-      stopListeningUI();
+      showAlert('🌐 Network error with speech service. Check your internet connection.','warn');
+      scheduleRestart();
+    } else if (e.error === 'aborted') {
+      // User or code aborted — do nothing
     } else {
-      stopListeningUI();
+      dbg('Unknown error: ' + e.error + ' — restarting');
+      scheduleRestart();
     }
   };
 
   rec.onend = () => {
-    // If still supposed to be listening (continuous mode ended unexpectedly), restart
-    if (isMicListening) {
-      try { rec.start(); } catch(e) { /* already started */ }
-    }
+    dbg('Recognition ended. isListening=' + isListening);
+    setWave('');
+    // If we're still in a listening session, restart automatically
+    if (isListening) scheduleRestart();
   };
 
   return rec;
 }
 
-// Request mic permission explicitly on first use
-async function requestMicPermission() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    // Permission granted — stop the stream immediately (we just needed the grant)
-    stream.getTracks().forEach(t => t.stop());
-    micPermGranted = true;
-    return true;
-  } catch (err) {
-    console.error('Mic permission denied:', err);
-    document.getElementById('permBanner').classList.add('show');
-    setMicHint('⛔ Microphone Blocked', 'Allow microphone in browser settings, then refresh.');
-    return false;
-  }
+function scheduleRestart() {
+  if (!isListening || restartGuard) return;
+  restartGuard = true;
+  setTimeout(() => {
+    restartGuard = false;
+    if (!isListening) return;
+    recognition = newRecognition();
+    try {
+      recognition.start();
+      dbg('Recognition restarted');
+    } catch(err) {
+      dbg('Restart failed: ' + err.message);
+    }
+  }, 200);
 }
 
-// ── MIC BUTTON: start listening ──
-document.getElementById('micBtn').addEventListener('click', async () => {
-  if (isMicListening) return; // already listening — do nothing (use Done button)
-  if (isSpeaking) window.speechSynthesis.cancel();
+// ── MIC BUTTON ─────────────────────────────────────────────────────
+$('micBtn').addEventListener('click', () => {
+  if (!SR) return;
+  if (isListening) return; // already recording — press Done to stop
 
-  // Request permission first time
-  if (!micPermGranted) {
-    const ok = await requestMicPermission();
-    if (!ok) return;
-  }
+  if (isSpeaking) speechSynthesis.cancel();
 
-  // Build a fresh recognition instance every time (most reliable cross-browser)
-  accumulatedTranscript = '';
-  recognition = buildRecognition();
-  if (!recognition) {
-    setMicHint('❌ Not Supported', 'Please use Chrome or Edge — Firefox does not support Web Speech API.');
-    return;
-  }
+  accumulated = '';
+  restartGuard = false;
+  recognition = newRecognition();
 
   try {
     recognition.start();
     startListeningUI();
-  } catch(err) {
-    console.error('recognition.start() error:', err);
-    setMicHint('❌ Could not start mic', 'Try refreshing the page and allow microphone access.');
+    hideAlert();
+    dbg('User started recording');
+  } catch (err) {
+    dbg('mic start error: ' + err.message);
+    showAlert('Could not start microphone: ' + err.message + '. Try refreshing.', 'err');
   }
 });
 
-// ── DONE BUTTON: stop and send ──
-document.getElementById('doneBtn').addEventListener('click', () => {
-  if (!isMicListening) return;
-  finishListeningAndSend();
-});
+// ── DONE BUTTON ─────────────────────────────────────────────────────
+$('doneBtn').addEventListener('click', finishAndSend);
 
-// ── CANCEL BUTTON: discard ──
-document.getElementById('cancelBtn').addEventListener('click', () => {
-  if (!isMicListening) return;
-  if (recognition) { recognition.onend = null; recognition.stop(); recognition = null; }
-  accumulatedTranscript = '';
+// ── CANCEL BUTTON ───────────────────────────────────────────────────
+$('cancelBtn').addEventListener('click', () => {
+  if (!isListening) return;
+  killRecognition();
   stopListeningUI();
-  addMessage('system', '🚫 Recording cancelled.');
+  accumulated = '';
+  addMsg('system','🚫 Recording cancelled.');
+  dbg('User cancelled recording');
 });
 
-// ── TEXT INPUT ──
-document.getElementById('textInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') sendText();
-});
-function sendText() {
-  const v = document.getElementById('textInput').value.trim();
-  if (!v) return;
-  document.getElementById('textInput').value = '';
-  processInput(v);
-}
-
-// =====================================================================
-// UI HELPERS
-// =====================================================================
-function startListeningUI() {
-  isMicListening = true;
-  if (!callActive) activateCallSession();
-
-  // Show Done row, hide Mic row
-  document.getElementById('micRow').style.display = 'none';
-  document.getElementById('doneSpeakingRow').classList.add('active');
-
-  // Live transcript
-  document.getElementById('liveTranscript').textContent = 'Listening…';
-  document.getElementById('liveTranscript').classList.add('active');
-
-  document.getElementById('callStatusText').textContent = '🔴 Recording your voice…';
-  setWaveMode('listening');
-}
-
-function stopListeningUI() {
-  isMicListening = false;
-
-  // Show Mic row, hide Done row
-  document.getElementById('micRow').style.display = 'flex';
-  document.getElementById('doneSpeakingRow').classList.remove('active');
-
-  // Hide live transcript
-  document.getElementById('liveTranscript').classList.remove('active');
-  document.getElementById('liveTranscript').textContent = 'Listening…';
-
-  document.getElementById('callStatusText').textContent = 'Tap the mic to speak';
-  setWaveMode('');
-}
-
-function finishListeningAndSend() {
-  // Stop recognition
-  if (recognition) {
-    recognition.onend = null; // prevent auto-restart
-    try { recognition.stop(); } catch(e) {}
-    recognition = null;
-  }
+function finishAndSend() {
+  if (!isListening) return;
+  killRecognition();
   stopListeningUI();
-
-  const text = accumulatedTranscript.trim();
-  accumulatedTranscript = '';
-
+  const text = accumulated.trim();
+  accumulated = '';
+  dbg('Sending: "' + (text || '(empty)') + '"');
   if (text) {
     processInput(text);
   } else {
-    addMessage('system', "⚠️ I didn't catch anything. Please try pressing the mic button and speaking clearly.");
-    agentSay("I didn't catch anything. Please press the microphone button and try again.");
+    addMsg('system', "⚠️ Nothing was captured. Please press the mic button again and speak clearly — then press Done Speaking.");
+    agentSay("I didn't catch anything. Please press the microphone button, speak your message, then press the purple Done Speaking button.");
   }
 }
 
-function setMicHint(title, sub) {
-  document.getElementById('micHintTitle').textContent = title;
-  document.getElementById('micHintSub').textContent = sub;
+function killRecognition() {
+  isListening = false;
+  if (recognition) {
+    recognition.onend = null; // prevent restart after manual stop
+    try { recognition.stop(); } catch(e) {}
+    recognition = null;
+  }
 }
 
-function setWaveMode(mode) {
-  const w = document.getElementById('waveBars');
-  w.classList.remove('listening','speaking');
-  if (mode) w.classList.add(mode);
+// ── TEXT FALLBACK ───────────────────────────────────────────────────
+$('textInput').addEventListener('keydown', e => { if(e.key==='Enter') sendText(); });
+function sendText() {
+  const v = $('textInput').value.trim();
+  if (!v) return;
+  $('textInput').value = '';
+  processInput(v);
+}
+function inject(text){ processInput(text); }
+
+// ── UI STATE HELPERS ────────────────────────────────────────────────
+function startListeningUI() {
+  isListening = true;
+  if (!callActive) activateCall();
+  $('micRow').style.display   = 'none';
+  $('doneRow').classList.add('on');
+  $('liveBox').textContent    = 'Listening… speak now';
+  $('liveBox').classList.add('on');
+  setStatus('🔴 Recording your voice…');
+  setWave('listen');
 }
 
-// =====================================================================
-// TEXT-TO-SPEECH
-// =====================================================================
+function stopListeningUI() {
+  isListening = false;
+  $('micRow').style.display = 'flex';
+  $('doneRow').classList.remove('on');
+  $('liveBox').classList.remove('on');
+  $('liveBox').textContent = 'Listening… speak now';
+  setStatus('Tap the mic to speak');
+  setWave('');
+}
+
+function setStatus(txt){ $('callStatus').textContent = txt; }
+function setWave(mode){
+  const w=$('waveBars');
+  w.classList.remove('listen','speak');
+  if(mode) w.classList.add(mode);
+}
+function showAlert(msg,type){
+  const b=$('alertBanner');
+  b.textContent=msg;
+  b.className='alert-banner on '+type;
+}
+function hideAlert(){
+  const b=$('alertBanner');
+  b.className='alert-banner';
+}
+
+// ── TTS ─────────────────────────────────────────────────────────────
 function agentSay(text) {
   if (!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.rate = 1.0;
-  utter.pitch = 1.05;
-  const voices = window.speechSynthesis.getVoices();
-  const preferred = voices.find(v => v.name.includes('Google US English')) ||
-                    voices.find(v => v.lang === 'en-US' && v.name.toLowerCase().includes('female')) ||
-                    voices.find(v => v.lang === 'en-US') || null;
-  if (preferred) utter.voice = preferred;
-
-  utter.onstart = () => { isSpeaking = true; setWaveMode('speaking'); document.getElementById('callStatusText').textContent = '🤖 Agent speaking…'; if (!callActive) activateCallSession(); };
-  utter.onend = () => { isSpeaking = false; setWaveMode(''); document.getElementById('callStatusText').textContent = 'Tap the mic to speak'; };
-  utter.onerror = () => { isSpeaking = false; setWaveMode(''); };
-  window.speechSynthesis.speak(utter);
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate  = 1.0;
+  u.pitch = 1.05;
+  const voices = speechSynthesis.getVoices();
+  const v = voices.find(v=>v.name.includes('Google US English'))
+         || voices.find(v=>v.lang==='en-US'&&/female|zira|hazel|susan/i.test(v.name))
+         || voices.find(v=>v.lang==='en-US') || null;
+  if (v) u.voice = v;
+  u.onstart = ()=>{ isSpeaking=true; setWave('speak'); setStatus('🤖 Agent speaking…'); if(!callActive) activateCall(); };
+  u.onend   = ()=>{ isSpeaking=false; setWave(''); setStatus('Tap the mic to speak'); };
+  u.onerror = ()=>{ isSpeaking=false; setWave(''); };
+  speechSynthesis.speak(u);
 }
 
-// =====================================================================
-// CALL SESSION TIMER
-// =====================================================================
-function activateCallSession() {
+// ── CALL TIMER ───────────────────────────────────────────────────────
+function activateCall() {
   callActive = true;
-  document.getElementById('callBanner').classList.add('active');
-  if (callTimerInt) clearInterval(callTimerInt);
-  callTimerInt = setInterval(() => {
-    callSeconds++;
-    const m = String(Math.floor(callSeconds/60)).padStart(2,'0');
-    const s = String(callSeconds%60).padStart(2,'0');
-    document.getElementById('callTimer').textContent = `${m}:${s}`;
-  }, 1000);
+  $('callBanner').classList.add('on');
+  if (callTimer) clearInterval(callTimer);
+  callTimer = setInterval(()=>{
+    callSecs++;
+    $('callTimer').textContent = `${String(Math.floor(callSecs/60)).padStart(2,'0')}:${String(callSecs%60).padStart(2,'0')}`;
+  },1000);
 }
 
-// =====================================================================
-// CHAT MESSAGES
-// =====================================================================
-function addMessage(role, text) {
-  const container = document.getElementById('messages');
-  const msgEl = document.createElement('div');
-  msgEl.className = `msg ${role}`;
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble';
-  bubble.innerHTML = text
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/~~(.*?)~~/g, '<del>$1</del>')
-    .replace(/`([^`]+)`/g, '<code style="font-family:var(--mono);background:rgba(255,255,255,.1);padding:1px 5px;border-radius:4px;">$1</code>')
-    .replace(/^### (.+)$/gm, '<h3 style="font-size:14px;margin-bottom:6px;">$1</h3>')
-    .replace(/^> (.+)$/gm, '<blockquote style="border-left:3px solid var(--cyan);padding-left:10px;color:var(--muted);margin:6px 0;">$1</blockquote>')
-    .replace(/\n/g, '<br>');
-  msgEl.appendChild(bubble);
-  container.appendChild(msgEl);
-  container.scrollTop = container.scrollHeight;
+// ── CHAT MESSAGES ────────────────────────────────────────────────────
+function addMsg(role, text) {
+  const c=$('messages');
+  const el=document.createElement('div'); el.className='msg '+role;
+  const b=document.createElement('div'); b.className='bubble';
+  b.innerHTML=text
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/~~(.*?)~~/g,'<del>$1</del>')
+    .replace(/`([^`]+)`/g,'<code style="font-family:var(--mono);background:rgba(255,255,255,.1);padding:1px 5px;border-radius:4px">$1</code>')
+    .replace(/^### (.+)$/gm,'<h3 style="font-size:14px;margin-bottom:6px">$1</h3>')
+    .replace(/^> (.+)$/gm,'<blockquote style="border-left:3px solid var(--cyan);padding-left:10px;color:var(--muted);margin:6px 0">$1</blockquote>')
+    .replace(/📌 _"([^"]+)"_/g,'<span style="color:#a5b4fc;font-style:italic">📌 "$1"</span>')
+    .replace(/\n/g,'<br>');
+  el.appendChild(b); c.appendChild(el);
+  c.scrollTop=c.scrollHeight;
 }
 
-// =====================================================================
-// PROGRESS BAR
-// =====================================================================
-const PHASE_TO_STEP = {
-  'greeting': -1, 'name': 0, 'phone': 1, 'query': 2, 'date': 3,
-  'complete': 4, 'reschedule_id': -1, 'reschedule_date': -1
-};
-const PHASE_LABEL = {
-  'greeting': 'Starting session…', 'name': 'Collecting: Full Name',
-  'phone': 'Collecting: Phone Number', 'query': 'Collecting: Details of Inquiry',
-  'date': 'Selecting: Appointment Date', 'complete': '✅ Dossier Recorded!',
-  'reschedule_id': 'Rescheduling: Finding your booking', 'reschedule_date': 'Rescheduling: New Date'
-};
-function updateProgressBar() {
-  const steps = [0,1,2,3].map(i => document.getElementById(`step${i}`));
-  const active = PHASE_TO_STEP[STATE.phase] ?? -1;
-  steps.forEach((el, i) => {
-    el.classList.remove('done','active');
-    if (i < active) el.classList.add('done');
-    else if (i === active) el.classList.add('active');
+// ── PROGRESS BAR ─────────────────────────────────────────────────────
+const PMAP={greeting:-1,name:0,phone:1,query:2,date:3,complete:4,reschedule_id:-1,reschedule_date:-1};
+const PLBL={greeting:'Starting session…',name:'Collecting: Full Name',phone:'Collecting: Phone Number',query:'Collecting: Inquiry Details',date:'Selecting: Appointment Date',complete:'✅ Dossier Recorded!',reschedule_id:'Rescheduling: Finding booking',reschedule_date:'Rescheduling: New date'};
+function updateProg(){
+  [0,1,2,3].forEach(i=>{
+    const el=$('s'+i); el.classList.remove('done','active');
+    const a=PMAP[S.phase]??-1;
+    if(i<a) el.classList.add('done');
+    else if(i===a) el.classList.add('active');
   });
-  document.getElementById('progressLabel').textContent = PHASE_LABEL[STATE.phase] || '';
+  $('progLabel').textContent=PLBL[S.phase]||'';
 }
 
-// =====================================================================
-// EXTRACTION HELPERS
-// =====================================================================
-function extractPhone(text) {
-  const m = text.match(/(?:\+?\d{1,3}[.\-\s]?)?\(?\d{3}\)?[.\-\s]?\d{3}[.\-\s]?\d{4}|\b\d{10}\b/);
-  if (m) {
-    const digits = m[0].replace(/\D/g,'');
-    if (digits.length >= 10) return digits.slice(0,10).replace(/(\d{3})(\d{3})(\d{4})/,'$1-$2-$3');
-  }
-  // Spoken digits: "five five five zero one nine two eight three four"
-  const wordNums = {zero:'0',one:'1',two:'2',three:'3',four:'4',five:'5',six:'6',seven:'7',eight:'8',nine:'9',oh:'0'};
-  let clean = text.toLowerCase().replace(/\b(zero|one|two|three|four|five|six|seven|eight|nine|oh)\b/g, w => wordNums[w]);
-  const m2 = clean.replace(/\s/g,'').match(/\d{10,}/);
-  if (m2 && m2[0].length >= 10) return m2[0].slice(0,10).replace(/(\d{3})(\d{3})(\d{4})/,'$1-$2-$3');
+// ── EXTRACTORS ────────────────────────────────────────────────────────
+function extractPhone(t){
+  // numeric patterns
+  const m=t.match(/(?:\+?\d{1,3}[.\-\s]?)?\(?\d{3}\)?[.\-\s]?\d{3}[.\-\s]?\d{4}|\b\d{10}\b/);
+  if(m){const d=m[0].replace(/\D/g,'');if(d.length>=10)return d.slice(0,10).replace(/(\d{3})(\d{3})(\d{4})/,'$1-$2-$3');}
+  // spoken digits
+  const W={zero:'0',one:'1',two:'2',three:'3',four:'4',five:'5',six:'6',seven:'7',eight:'8',nine:'9',oh:'0'};
+  let c=t.toLowerCase().replace(/\b(zero|one|two|three|four|five|six|seven|eight|nine|oh)\b/g,w=>W[w]);
+  const m2=c.replace(/[\s\-\.]/g,'').match(/\d{10,}/);
+  if(m2&&m2[0].length>=10)return m2[0].slice(0,10).replace(/(\d{3})(\d{3})(\d{4})/,'$1-$2-$3');
   return null;
 }
 
-function extractName(text) {
-  const patterns = [
-    /(?:my name is|i am|i'm|this is|name[:\s]+)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/i,
-    /(?:Dr\.|Mr\.|Mrs\.|Ms\.)\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?/i,
+function extractName(t){
+  const PP=[
+    /(?:my name is|i am|i'm|this is|name[:\s]+)\s+([A-Za-z][a-z]+(?:\s+[A-Za-z][a-z]+){0,2})/i,
     /^([A-Z][a-z]{1,}(?:\s+[A-Z][a-z]{1,}){1,2})$/
   ];
-  for (const p of patterns) {
-    const m = text.match(p);
-    if (m) {
-      const c = (m[1]||m[0]).trim();
-      const bad = ['hello','hi','hey','yes','no','okay','sure','thanks','vittoris','reschedule','booking','slot','agent','speaking','need','help'];
-      if (!bad.includes(c.toLowerCase()) && c.length > 2) return c;
-    }
+  const BAD=['hello','hi','hey','yes','no','okay','sure','thanks','agent','speaking','need','help','vittoris','good','morning','afternoon'];
+  for(const p of PP){
+    const m=t.match(p);
+    if(m){const c=(m[1]||m[0]).trim();if(!BAD.includes(c.toLowerCase())&&c.length>2)return c;}
   }
+  // fallback: short input with 2-3 words that look like a name
+  const words=t.trim().split(/\s+/);
+  if(words.length>=2&&words.length<=3&&words.every(w=>/^[A-Za-z'-]{2,}$/.test(w))&&!BAD.includes(words[0].toLowerCase()))
+    return words.map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
   return null;
 }
 
-function extractDate(text) {
-  const low = text.toLowerCase();
-  // Day names
-  const dayMap = { monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6,sunday:7 };
-  for (const [day, offset] of Object.entries(dayMap)) {
-    if (low.includes(day)) {
-      const dt = new Date(); dt.setDate(dt.getDate() + offset);
-      const timeMatch = low.match(/(\d{1,2}(?::\d{2})?\s*(?:am|pm))/);
-      const timeStr = timeMatch ? timeMatch[0].toUpperCase() : '10:00 AM';
-      return `${dt.toDateString()} at ${timeStr} EST`;
+function extractDate(t){
+  const L=t.toLowerCase();
+  const DAYS={monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6,sunday:7};
+  for(const[d,o]of Object.entries(DAYS)){
+    if(L.includes(d)){
+      const dt=new Date();dt.setDate(dt.getDate()+o);
+      const tm=(L.match(/(\d{1,2}(?::\d{2})?\s*(?:am|pm))/)||[])[0];
+      return dt.toDateString()+' at '+(tm?tm.toUpperCase():'10:00 AM')+' IST';
     }
   }
-  if (low.includes('tomorrow')) {
-    const dt = new Date(); dt.setDate(dt.getDate()+1);
-    while([0,6].includes(dt.getDay())) dt.setDate(dt.getDate()+1);
-    return `${dt.toDateString()} at 10:00 AM EST`;
-  }
-  if (low.includes('next week')) {
-    const dt = new Date(); dt.setDate(dt.getDate()+7);
-    while([0,6].includes(dt.getDay())) dt.setDate(dt.getDate()+1);
-    return `${dt.toDateString()} at 10:00 AM EST`;
-  }
-  // Slot N
-  const slotM = low.match(/slot\s*([1-5])/);
-  if (slotM) {
-    const slotTimes = ['10:00 AM','11:30 AM','2:00 PM','3:30 PM','5:00 PM'];
-    const idx = Math.min(parseInt(slotM[1])-1,4);
-    const dt = new Date(); dt.setDate(dt.getDate()+1);
-    while([0,6].includes(dt.getDay())) dt.setDate(dt.getDate()+1);
-    return `${dt.toDateString()} at ${slotTimes[idx]} EST`;
-  }
-  // Month name
-  const dateM = text.match(/\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}/i);
-  if (dateM) return `${dateM[0]} at 10:00 AM EST`;
-  // Earliest / any
-  if (low.includes('earliest')||low.includes('any')||low.includes('first available')||low.includes('soonest')) {
-    const dt = new Date(); dt.setDate(dt.getDate()+1);
-    while([0,6].includes(dt.getDay())) dt.setDate(dt.getDate()+1);
-    return `${dt.toDateString()} at 10:00 AM EST`;
-  }
+  if(L.includes('tomorrow')){const dt=new Date();dt.setDate(dt.getDate()+1);while([0,6].includes(dt.getDay()))dt.setDate(dt.getDate()+1);return dt.toDateString()+' at 10:00 AM IST';}
+  if(L.includes('next week')){const dt=new Date();dt.setDate(dt.getDate()+7);while([0,6].includes(dt.getDay()))dt.setDate(dt.getDate()+1);return dt.toDateString()+' at 10:00 AM IST';}
+  const sm=L.match(/slot\s*([1-5])/);
+  if(sm){const times=['10:00 AM','11:30 AM','2:00 PM','3:30 PM','5:00 PM'];const dt=new Date();dt.setDate(dt.getDate()+1);while([0,6].includes(dt.getDay()))dt.setDate(dt.getDate()+1);return dt.toDateString()+' at '+times[Math.min(+sm[1]-1,4)]+' IST';}
+  const dm=t.match(/\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}/i);
+  if(dm)return dm[0]+' at 10:00 AM IST';
+  if(/earliest|any\s*time|first available|soonest|any\s*slot/.test(L)){const dt=new Date();dt.setDate(dt.getDate()+1);while([0,6].includes(dt.getDay()))dt.setDate(dt.getDate()+1);return dt.toDateString()+' at 10:00 AM IST';}
   return null;
 }
 
-function getSlotSuggestions() {
-  const slots = [];
-  const dt = new Date();
-  const hours = [[10,0],[11,30],[14,0],[15,30]];
-  let count = 0;
-  for (let d = 1; d <= 14 && count < 4; d++) {
-    const target = new Date(dt); target.setDate(dt.getDate()+d);
-    if ([0,6].includes(target.getDay())) continue;
-    if (count >= 4) break;
-    target.setHours(hours[count][0], hours[count][1], 0, 0);
-    slots.push(`Slot ${count+1}: ${target.toDateString()} at ${target.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})} EST`);
-    count++;
+function slots(){
+  const r=[];const dt=new Date();const HH=[[10,0],[11,30],[14,0],[15,30]];let n=0;
+  for(let d=1;d<=14&&n<4;d++){
+    const x=new Date(dt);x.setDate(dt.getDate()+d);
+    if([0,6].includes(x.getDay()))continue;
+    x.setHours(HH[n][0],HH[n][1],0,0);
+    r.push(`Slot ${n+1}: ${x.toDateString()} at ${x.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})} IST`);
+    n++;
   }
-  return slots;
+  return r;
 }
 
-// =====================================================================
-// DOSSIER MANAGEMENT
-// =====================================================================
-function createDossier(name, phone, query, date) {
-  const id = 'VIT-' + Math.random().toString(36).substring(2,8).toUpperCase();
-  const official = /server|database|pipeline|api|crash/i.test(query) ? 'Sarah Chen' :
-                   /voice|call|audio|sip|phone/i.test(query) ? 'Marcus Vance' : 'Uday Zayn';
-  const dossier = { id, name, phone, query, date, official, status: 'PENDING_OFFICIAL_CLEARANCE', created: new Date().toLocaleString() };
-  STATE.dossiers = STATE.dossiers || [];
-  STATE.dossiers.unshift(dossier);
-  saveState(); refreshDossiers();
-  return dossier;
+// ── DOSSIERS ──────────────────────────────────────────────────────────
+function mkDossier(name,phone,query,date){
+  const id='VIT-'+Math.random().toString(36).substring(2,8).toUpperCase();
+  const official=/server|database|pipeline|api|crash/i.test(query)?'Sarah Chen':/voice|call|audio|sip|phone/i.test(query)?'Marcus Vance':'Uday Zayn';
+  const d={id,name,phone,query,date,official,status:'PENDING_OFFICIAL_CLEARANCE',created:new Date().toLocaleString()};
+  S.dossiers.unshift(d);saveS();refreshDossiers();return d;
 }
-
-function refreshDossiers() {
-  const container = document.getElementById('dossiersList');
-  const dossiers = STATE.dossiers || [];
-  if (!dossiers.length) {
-    container.innerHTML = '<p style="font-size:12px;color:var(--muted);">No dossiers yet. Complete a voice intake to create one.</p>';
-    return;
-  }
-  container.innerHTML = dossiers.map(d => `
+function refreshDossiers(){
+  const c=$('dossiersList');
+  if(!S.dossiers.length){c.innerHTML='<p style="font-size:12px;color:var(--muted)">No dossiers yet. Complete a voice intake to create one.</p>';return;}
+  c.innerHTML=S.dossiers.map(d=>`
     <div class="scard ${d.status==='OFFICIAL_NOTIFIED'?'cleared':d.status==='RESCHEDULED'?'confirmed':'pending'}">
-      <div class="scard-row">
-        <div class="scard-title">${d.name}</div>
-        <span class="sbadge ${d.status==='OFFICIAL_NOTIFIED'?'cyan':d.status==='RESCHEDULED'?'green':'amber'}">
-          ${d.status==='OFFICIAL_NOTIFIED'?'✅ NOTIFIED':d.status==='RESCHEDULED'?'🔄 RESCHEDULED':'⏳ PENDING'}
-        </span>
-      </div>
-      <div class="scard-sub">Ref: ${d.id} &bull; ${d.created}</div>
-      <hr class="sep">
-      <div class="detail-row"><span>📞 Phone:</span> ${d.phone}</div>
-      <div class="detail-row"><span>💬 Query:</span> ${d.query}</div>
-      <div class="detail-row"><span>📅 Appointment:</span> ${d.date}</div>
-      <div class="detail-row"><span>👤 Assigned:</span> ${d.official}</div>
-    </div>
-  `).join('');
+      <div class="scard-row"><div class="scard-title">${d.name}</div>
+      <span class="sbadge ${d.status==='OFFICIAL_NOTIFIED'?'cyan':d.status==='RESCHEDULED'?'green':'amber'}">${d.status==='OFFICIAL_NOTIFIED'?'✅ NOTIFIED':d.status==='RESCHEDULED'?'🔄 RESCHEDULED':'⏳ PENDING'}</span></div>
+      <div class="scard-sub">Ref: ${d.id} &bull; ${d.created}</div><hr class="sep">
+      <div class="drow"><span>📞 Phone:</span> ${d.phone}</div>
+      <div class="drow"><span>💬 Query:</span> ${d.query}</div>
+      <div class="drow"><span>📅 Appt:</span> ${d.date}</div>
+      <div class="drow"><span>👤 Assigned:</span> ${d.official}</div>
+    </div>`).join('');
 }
 
-// =====================================================================
-// OFFICIAL STATUS
-// =====================================================================
-let officialStatus = 'IN_MEETINGS';
-function setOfficialStatus(status) {
-  officialStatus = status;
-  const avail = status === 'AVAILABLE';
-  const cls = avail ? 'os-avail' : 'os-busy';
-  const lbl = avail ? 'AVAILABLE' : 'IN MEETINGS';
-  ['udayStatus','sarahStatus','marcusStatus'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { el.className = `official-status ${cls}`; el.textContent = lbl; }
-  });
-  document.getElementById('officialStatusBadge').textContent = `Officials: ${avail ? 'Available' : 'In Meetings'}`;
-  const dot = document.getElementById('officialDot');
-  if (dot) dot.className = `dot ${avail ? 'dot-green' : 'dot-amber'}`;
+// ── OFFICIALS ─────────────────────────────────────────────────────────
+function setOffStatus(avail){
+  const cls=avail?'st-avail':'st-busy';const lbl=avail?'AVAILABLE':'IN MEETINGS';
+  ['st-uday','st-sarah','st-marcus'].forEach(id=>{const e=$(id);if(e){e.className='off-st '+cls;e.textContent=lbl;}});
+  $('offBadge').textContent='Officials: '+(avail?'Available':'In Meetings');
+  const dot=$('offDot');if(dot)dot.className='dot '+(avail?'dot-green':'dot-amber');
+}
+function simClear(){
+  const pending=S.dossiers.filter(d=>d.status==='PENDING_OFFICIAL_CLEARANCE');
+  pending.forEach(d=>d.status='OFFICIAL_NOTIFIED');saveS();setOffStatus(true);refreshDossiers();
+  const n=pending.length;
+  addMsg('agent',`📋 **Officials Schedule Cleared!**\n\n${n>0?`✅ **${n} dossier${n>1?'s':''} delivered** to leadership dashboard.`:'No pending dossiers.'}\n\nAll team leads are now reviewing customer files.`);
+  agentSay(n>0?`Officials have cleared their schedule! ${n} customer dossier${n>1?'s':''} have been sent to leadership. The team is now reviewing each file.`:'Officials have cleared their schedule and are now available.');
 }
 
-function simClearSchedule() {
-  const dossiers = STATE.dossiers || [];
-  const pending = dossiers.filter(d => d.status === 'PENDING_OFFICIAL_CLEARANCE');
-  pending.forEach(d => d.status = 'OFFICIAL_NOTIFIED');
-  saveState(); setOfficialStatus('AVAILABLE'); refreshDossiers();
-  const count = pending.length;
-  const txt = count > 0
-    ? `Officials have cleared their schedule! ${count} customer dossier${count>1?'s':''} have been delivered to leadership. Uday Zayn, Sarah Chen, and Marcus Vance are now reviewing the customer files.`
-    : `Officials have cleared their schedule and are now available.`;
-  addMessage('agent', `📋 **Officials Schedule Cleared!**\n\n${count > 0 ? `✅ **${count} pending dossier${count>1?'s':''} delivered** to leadership dashboard.` : 'No pending dossiers.'}\n\nAll team leads are now reviewing incoming customer files.`);
-  agentSay(txt);
-}
+// ── CONVERSATION ENGINE ──────────────────────────────────────────────
+function processInput(text){
+  if(!callActive) activateCall();
+  addMsg('user',text);
+  const L=text.toLowerCase();
 
-function simReschedule() { processInput("I need to reschedule my appointment"); }
-function simNewIntake() { processInput("Hello, I need help scheduling a consultation with Vittoris AI"); }
-
-// =====================================================================
-// CORE CONVERSATION ENGINE
-// =====================================================================
-function processInput(text) {
-  if (!callActive) activateCallSession();
-  addMessage('user', text);
-  const low = text.toLowerCase();
-
-  // --- Reschedule intent ---
-  if (STATE.phase !== 'reschedule_id' && STATE.phase !== 'reschedule_date' &&
-      (low.includes('reschedule') || low.includes('change appointment') || low.includes('move my appointment') || low.includes('change my appointment'))) {
-    STATE.phase = 'reschedule_id'; saveState(); updateProgressBar();
-    const dossiers = STATE.dossiers || [];
-    if (!dossiers.length) {
-      const msg = "I'd be happy to help you reschedule. I don't see any existing bookings in this session yet. Could you tell me the name or reference number on your booking?";
-      addMessage('agent', msg); agentSay(msg); return;
-    }
-    const latestRef = dossiers[0].id;
-    STATE.rescheduleId = latestRef;
-    const msg = `Sure! I found your most recent booking (${latestRef} for **${dossiers[0].name}**). What is your preferred new appointment date? You can say something like "Tuesday at 2 PM", "Slot 1", or "earliest available".`;
-    addMessage('agent', msg); agentSay(`Sure! I found your most recent booking for ${dossiers[0].name}. What is your preferred new appointment date? You can say something like Tuesday at 2 PM, Slot 1, or earliest available.`);
+  // Reschedule intent
+  if(!['reschedule_id','reschedule_date'].includes(S.phase)&&
+     /reschedule|change\s+(my\s+)?appointment|move\s+(my\s+)?appointment/.test(L)){
+    S.phase='reschedule_id';saveS();updateProg();
+    if(!S.dossiers.length){const m="I'd love to help reschedule. I don't see any existing bookings yet. Could you tell me the name or reference on your booking?";addMsg('agent',m);agentSay(m);return;}
+    S.rescId=S.dossiers[0].id;
+    const m=`Sure! Found your most recent booking (**${S.dossiers[0].id}** for **${S.dossiers[0].name}**). What is your preferred new appointment date? Say something like "Tuesday at 2 PM", "Slot 1", or "earliest available".`;
+    addMsg('agent',m);agentSay(`Found your booking for ${S.dossiers[0].name}. What new date would you like? You can say Tuesday at 2 PM, Slot 1, or earliest available.`);
     return;
   }
 
-  // --- Reschedule Date ---
-  if (STATE.phase === 'reschedule_date' || (STATE.phase === 'reschedule_id' && extractDate(text))) {
-    const newDate = extractDate(text);
-    if (!newDate) {
-      const slots = getSlotSuggestions();
-      const msg = `I didn't quite catch a date. Here are some open slots:\n${slots.join('\n')}\n\nWhich one would you like?`;
-      addMessage('agent', msg); agentSay("I didn't catch a date. Here are some open slots: " + slots.slice(0,3).join(', ') + ". Which one works for you?"); return;
+  if(S.phase==='reschedule_date'||(S.phase==='reschedule_id'&&extractDate(text))){
+    const nd=extractDate(text);
+    if(!nd){const sl=slots();const m=`Didn't catch a date. Available slots:\n${sl.join('\n')}\nWhich works?`;addMsg('agent',m);agentSay('Which slot works? '+sl.slice(0,3).join(', '));return;}
+    const tgt=S.rescId?S.dossiers.find(d=>d.id===S.rescId):S.dossiers[0];
+    if(tgt){const od=tgt.date;tgt.date=nd;tgt.status='RESCHEDULED';saveS();refreshDossiers();
+      addMsg('agent',`✅ **Appointment Rescheduled!**\n\n- **Customer:** ${tgt.name}\n- **Old Date:** ~~${od}~~\n- **New Date:** **${nd}**\n- **Ref:** \`${tgt.id}\`\n\nAssigned official (${tgt.official}) has been updated. Anything else?`);
+      agentSay(`Rescheduled to ${nd}. The assigned official has been updated. Is there anything else?`);
     }
-    const dossiers = STATE.dossiers || [];
-    const target = STATE.rescheduleId ? dossiers.find(d => d.id === STATE.rescheduleId) : dossiers[0];
-    if (target) {
-      const oldDate = target.date; target.date = newDate; target.status = 'RESCHEDULED';
-      saveState(); refreshDossiers();
-      const msg = `✅ **Appointment Rescheduled!**\n\n- **Customer:** ${target.name}\n- **Previous Date:** ~~${oldDate}~~\n- **New Appointment:** **${newDate}**\n- **Ref:** \`${target.id}\`\n\nThe assigned official (${target.official}) has been updated. Is there anything else you need?`;
-      addMessage('agent', msg);
-      agentSay(`Your appointment has been rescheduled to ${newDate}. The assigned official has been updated. Is there anything else I can help you with?`);
-    }
-    STATE.phase = 'greeting'; STATE.rescheduleId = null; saveState(); updateProgressBar(); return;
+    S.phase='greeting';S.rescId=null;saveS();updateProg();return;
   }
 
-  if (STATE.phase === 'reschedule_id') {
-    const dossiers = STATE.dossiers || [];
-    const found = dossiers.find(d => text.toLowerCase().includes(d.name.toLowerCase()) || text.includes(d.phone) || text.toUpperCase().includes(d.id));
-    if (found) {
-      STATE.rescheduleId = found.id; STATE.phase = 'reschedule_date'; saveState(); updateProgressBar();
-      const msg = `Found your booking for **${found.name}** (\`${found.id}\`) currently on ${found.date}. What new date would you like?`;
-      addMessage('agent', msg); agentSay(`Found your booking for ${found.name}. What new date would you like?`);
-    } else {
-      const slots = getSlotSuggestions();
-      STATE.phase = 'reschedule_date'; saveState(); updateProgressBar();
-      const msg = `Got it. What new appointment date works for you? Available slots:\n${slots.slice(0,3).join('\n')}`;
-      addMessage('agent', msg); agentSay("What new appointment date works for you? " + slots.slice(0,3).join(', '));
+  if(S.phase==='reschedule_id'){
+    const f=S.dossiers.find(d=>L.includes(d.name.toLowerCase())||text.includes(d.phone)||text.toUpperCase().includes(d.id));
+    if(f){S.rescId=f.id;S.phase='reschedule_date';saveS();updateProg();const m=`Found booking for **${f.name}** (\`${f.id}\`) on ${f.date}. What new date?`;addMsg('agent',m);agentSay(`Found your booking for ${f.name}. What new date would you like?`);}
+    else{const sl=slots();S.phase='reschedule_date';saveS();updateProg();const m=`Got it. What new date works? Available:\n${sl.slice(0,3).join('\n')}`;addMsg('agent',m);agentSay('What new date works for you? '+sl.slice(0,3).join(', '));}
+    return;
+  }
+
+  // ── INTAKE ──
+  if(S.phase==='greeting'){
+    const name=extractName(text);
+    if(name){S.name=name;S.phase='phone';saveS();updateProg();
+      const m=`Hello, **${name}**! 👋 Lovely to hear from you.\n\nOur company officials are currently in closed meetings. I'll take down your details so they can follow up as soon as their schedule clears.\n\nCould you please share your **phone number**?`;
+      addMsg('agent',m);agentSay(`Hello ${name}! Our officials are in meetings. I'll record your details. Please share your phone number.`);
+    }else{S.phase='name';saveS();updateProg();
+      const m=`Hello! Welcome to **Vittoris AI**.\n\nOur officials are currently in closed meetings. I'll take down your **name**, **phone**, **inquiry**, and book an appointment date — when officials clear their schedule, they'll be notified immediately with your complete file.\n\nTo start, could you tell me your **Full Name**?`;
+      addMsg('agent',m);agentSay('Hello! Welcome to Vittoris AI. Our officials are in meetings. I will record your details and book an appointment. Could you tell me your full name?');
     }
     return;
   }
 
-  // ── INTAKE FLOW ──
-
-  if (STATE.phase === 'greeting') {
-    const name = extractName(text);
-    if (name) {
-      STATE.name = name; STATE.phase = 'phone'; saveState(); updateProgressBar();
-      const msg = `Hello, **${name}**! 👋 Lovely to hear from you.\n\nOur company officials are currently in closed meetings. I will take down your details so they can follow up as soon as their schedule clears.\n\nCould you please share your **phone number** so the official can reach you?`;
-      addMessage('agent', msg); agentSay(`Hello, ${name}! Our company officials are currently in meetings. I'll take down your details for them. Could you please share your phone number?`);
-    } else {
-      STATE.phase = 'name'; saveState(); updateProgressBar();
-      const msg = `Hello! Welcome to **Vittoris AI**.\n\nOur company officials are currently in closed meetings and unavailable right now. I am here to help — I'll take down your name, phone number, and query, then schedule an appointment for you. When officials clear their schedule, they'll be notified immediately with your complete file.\n\nTo get started, could you please tell me your **Full Name**?`;
-      addMessage('agent', msg); agentSay("Hello! Welcome to Vittoris AI. Our officials are currently in meetings. I'll take down your details and schedule an appointment. Could you please tell me your full name?");
+  if(S.phase==='name'){
+    const name=extractName(text)||(text.trim().split(/\s+/).length<=4&&text.trim().length>2?text.trim():null);
+    if(name){S.name=name;S.phase='phone';saveS();updateProg();
+      addMsg('agent',`Thank you, **${name}**! 😊\n\nCould you share your **phone number** so the official can contact you?`);
+      agentSay(`Thank you ${name}. Could you share your phone number so the official can reach you?`);
+    }else{
+      addMsg('agent','Could you say your full name? For example: "My name is Priya Sharma" or just say your name clearly.');
+      agentSay('Could you say your full name? For example, My name is Priya Sharma.');
     }
     return;
   }
 
-  if (STATE.phase === 'name') {
-    const name = extractName(text) || (text.trim().split(/\s+/).length <= 4 && text.trim().length > 2 ? text.trim() : null);
-    if (name) {
-      STATE.name = name; STATE.phase = 'phone'; saveState(); updateProgressBar();
-      const msg = `Thank you, **${name}**! 😊\n\nCould you please share your **phone number** so the official can contact you?`;
-      addMessage('agent', msg); agentSay(`Thank you, ${name}. Could you please share your phone number so the official can reach you?`);
-    } else {
-      const msg = `I'd like to get your name. Could you say something like "My name is John Smith" or just say your full name clearly?`;
-      addMessage('agent', msg); agentSay(msg);
+  if(S.phase==='phone'){
+    const ph=extractPhone(text);
+    if(ph){S.phone=ph;S.phase='query';saveS();updateProg();
+      addMsg('agent',`Got it! Phone saved as **${ph}**.\n\nNow, could you briefly describe your **inquiry**? (e.g. voice agent setup, pricing consultation, server pipeline, WhatsApp bot, custom AI, etc.)`);
+      agentSay(`Phone saved as ${ph}. What is your inquiry or what problem do you need help with?`);
+    }else{
+      addMsg('agent','I didn\'t catch a phone number. Could you say it clearly — for example: "My number is 98765 43210" or just read the digits one by one.');
+      agentSay('Could you say your phone number clearly? For example, 9 8 7 6 5 4 3 2 1 0.');
     }
     return;
   }
 
-  if (STATE.phase === 'phone') {
-    const phone = extractPhone(text);
-    if (phone) {
-      STATE.phone = phone; STATE.phase = 'query'; saveState(); updateProgressBar();
-      const msg = `Got it! Phone saved as **${phone}**.\n\nNow, could you briefly describe your **inquiry or the problem** you need help with?\n_(For example: voice agent setup, server pipeline crash, pricing consultation, custom AI infrastructure, WhatsApp bot, etc.)_`;
-      addMessage('agent', msg); agentSay(`Phone number saved as ${phone}. What is your inquiry or the problem you need help with?`);
-    } else {
-      const msg = `I didn't catch a phone number from that. Could you please state it clearly? For example: "My number is 555 019 2834" or just read out the digits one by one.`;
-      addMessage('agent', msg); agentSay(msg);
+  if(S.phase==='query'){
+    if(text.trim().length>=5){S.query=text.trim();S.phase='date';saveS();updateProg();
+      const sl=slots();
+      addMsg('agent',`Understood! Noted your inquiry:\n📌 _"${S.query}"_\n\nLastly — what **appointment date** works best?\n${sl.join('\n')}\n\n_(Say "Slot 1", "Tuesday at 3 PM", "tomorrow", or any date)_`);
+      agentSay('Noted. Here are some available slots. '+sl.join('. ')+'. Which one works best for you?');
+    }else{
+      addMsg('agent','Could you share a bit more about what you need help with?');
+      agentSay('Could you share more about what you need help with?');
     }
     return;
   }
 
-  if (STATE.phase === 'query') {
-    if (text.trim().length >= 5) {
-      STATE.query = text.trim(); STATE.phase = 'date'; saveState(); updateProgressBar();
-      const slots = getSlotSuggestions();
-      const msg = `Understood! I've noted your inquiry:\n📌 _"${STATE.query}"_\n\nLastly, what **appointment date** works best for you? Here are the earliest available slots:\n${slots.join('\n')}\n\n_(You can say "Slot 1", "Slot 2", "Tomorrow at 2 PM", or any date that works)_`;
-      addMessage('agent', msg); agentSay("Noted. Here are some available appointment slots. " + slots.join('. ') + ". Which one works best for you?");
-    } else {
-      const msg = `Could you tell me a bit more about what you need help with? A short description is fine.`;
-      addMessage('agent', msg); agentSay(msg);
-    }
-    return;
-  }
-
-  if (STATE.phase === 'date') {
-    const date = extractDate(text);
-    if (date) {
-      STATE.date = date;
-      const dossier = createDossier(STATE.name, STATE.phone, STATE.query, STATE.date);
-      STATE.phase = 'complete'; saveState(); updateProgressBar();
-      const official = dossier.official;
-      const confirmMsg = `### ✅ All Set, ${STATE.name}!\n\nYour appointment and inquiry have been officially recorded.\n\n📋 **Dossier Reference:** \`${dossier.id}\`\n👤 **Name:** ${STATE.name}\n📞 **Phone:** ${STATE.phone}\n💬 **Query:** ${STATE.query}\n📅 **Appointment Date:** ${date}\n👨‍💼 **Assigned Official:** ${official}\n\n> 🔔 **What happens next:** Our officials are currently in closed sessions. As soon as **${official}** clears their schedule, they will receive your complete file and reach out to you at **${STATE.phone}** to confirm and prepare for your meeting.\n\nIs there anything else I can help you with?`;
-      addMessage('agent', confirmMsg);
-      agentSay(`Perfect, ${STATE.name}! All done. I've locked in your appointment for ${date} and recorded your inquiry. As soon as ${official} clears their schedule, they'll receive your full file and reach out to you at ${STATE.phone}. Is there anything else you need?`);
-      STATE.name = null; STATE.phone = null; STATE.query = null; STATE.date = null;
-      STATE.phase = 'greeting'; saveState(); updateProgressBar();
-    } else {
-      const slots = getSlotSuggestions();
-      const msg = `I didn't quite catch a date. Here are some open slots:\n${slots.join('\n')}\n\nWhich slot works best for you?`;
-      addMessage('agent', msg); agentSay("Which of these slots works best for you? " + slots.slice(0,3).join(', '));
+  if(S.phase==='date'){
+    const dt=extractDate(text);
+    if(dt){S.date=dt;
+      const dos=mkDossier(S.name,S.phone,S.query,S.date);S.phase='complete';saveS();updateProg();
+      addMsg('agent',`### ✅ All Set, ${S.name}!\n\nYour appointment and inquiry have been officially recorded.\n\n📋 **Dossier Ref:** \`${dos.id}\`\n👤 **Name:** ${S.name}\n📞 **Phone:** ${S.phone}\n💬 **Query:** ${S.query}\n📅 **Appointment:** ${dt}\n👨‍💼 **Assigned Official:** ${dos.official}\n\n> 🔔 As soon as **${dos.official}** clears their schedule, they'll receive your complete file and reach out to you at **${S.phone}** to confirm your appointment.\n\nIs there anything else I can help you with?`);
+      agentSay(`Perfect ${S.name}! All done. Your appointment is booked for ${dt} and your inquiry has been recorded. As soon as ${dos.official} is free, they will contact you at ${S.phone}. Is there anything else?`);
+      S.name=null;S.phone=null;S.query=null;S.date=null;S.phase='greeting';saveS();updateProg();
+    }else{
+      const sl=slots();
+      addMsg('agent',`Didn't quite catch a date. Available slots:\n${sl.join('\n')}\n\nWhich one works best?`);
+      agentSay('Which slot works best for you? '+sl.slice(0,3).join(', '));
     }
     return;
   }
 
   // Fallback
-  STATE.phase = 'greeting'; saveState(); updateProgressBar();
-  const msg = `Of course! Is this a new inquiry? I'll be happy to record your details. Could you tell me your **Full Name** to get started?`;
-  addMessage('agent', msg); agentSay("Of course! Is this a new inquiry? Could you tell me your full name to get started?");
+  S.phase='greeting';saveS();updateProg();
+  addMsg('agent','Is this a new inquiry? I\'d be happy to help record your details. Could you tell me your **Full Name** to get started?');
+  agentSay('Is this a new inquiry? Could you tell me your full name to get started?');
 }
 
-// =====================================================================
-// TABS
-// =====================================================================
-document.querySelectorAll('.stab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.stab').forEach(b => b.classList.remove('on'));
-    document.querySelectorAll('.spane').forEach(p => p.classList.remove('on'));
+// ── TABS ──────────────────────────────────────────────────────────────
+document.querySelectorAll('.stab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.stab').forEach(b=>b.classList.remove('on'));
+    document.querySelectorAll('.spane').forEach(p=>p.classList.remove('on'));
     btn.classList.add('on');
-    document.getElementById(btn.dataset.tab).classList.add('on');
+    $(btn.dataset.tab).classList.add('on');
   });
 });
-
-// =====================================================================
-// INIT
-// =====================================================================
-window.addEventListener('load', () => {
-  // Check for browser support upfront
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    setMicHint('❌ Not Supported in this Browser', 'Please open this page in Google Chrome or Microsoft Edge.');
-    document.getElementById('micBtn').style.opacity = '.35';
-    document.getElementById('micBtn').style.cursor = 'not-allowed';
-    document.getElementById('micBtn').onclick = null;
-  }
-
-  refreshDossiers();
-  updateProgressBar();
-
-  // Greeting voice on load
-  setTimeout(() => {
-    agentSay("Hello! Welcome to Vittoris AI. Our company officials are currently in meetings. I am your autonomous voice assistant and I am here to take down your details, record your inquiry, and schedule an appointment for you. Please press the green microphone button, speak clearly, and when you are done, press the purple Done Speaking button.");
-  }, 900);
-});
-
-// Voices load async in some browsers — force reload
-if ('speechSynthesis' in window) {
-  window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
-}
 </script>
 </body>
 </html>
